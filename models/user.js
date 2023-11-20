@@ -26,6 +26,13 @@ module.exports = (sequelize,DataTypes)=>{
             validate:{
                 isEmail:true
             }
+        },
+        image:{
+            type:DataTypes.STRING,
+            allowNULL:true,
+            validate:{
+                isUrl:true
+            }
         }
     },{
         charset:'utf8',
@@ -34,11 +41,10 @@ module.exports = (sequelize,DataTypes)=>{
         timestamps:false,
     });
 
-    // User.associate = models =>{
-    //     User.hasOne(models.UserImage,{
-    //         foreignKey:"userId",
-    //         onDelete: 'CASCADE'
-    //     })
-    // }
+    User.associate = models =>{
+        User.hasMany(models.Schedule,{
+            foreignKey:'userId'
+        })
+    }
     return User;
 };
