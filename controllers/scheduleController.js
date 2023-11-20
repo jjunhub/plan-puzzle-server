@@ -23,7 +23,7 @@ exports.createSchedule = async (req, res) => {
 
 exports.showSchedules = async (req, res) => {
     try {
-        const userId = req.userId;
+        const userId = req.session.user.id;
         const date = req.query.date;
         const response = await scheduleService.showSchedules(userId, date);
         res.status(200).json(response);
@@ -34,7 +34,7 @@ exports.showSchedules = async (req, res) => {
 
 exports.deleteSchedule = async (req, res) => {
     try {
-        const userId = req.userId;
+        const userId = req.session.user.id;
         const scheduleId = req.params.scheduleId;
         const option = req.body;
         await scheduleService.deleteSchedule(userId, scheduleId, option);
