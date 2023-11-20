@@ -31,3 +31,15 @@ exports.showSchedules = async (req, res) => {
         console.log(err);
     }
 };
+
+exports.deleteSchedule = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const scheduleId = req.params.scheduleId;
+        const option = req.body;
+        await scheduleService.deleteSchedule(userId, scheduleId, option);
+        res.status(200).send();
+    } catch (err) {
+        console.log(err);
+    }
+}
