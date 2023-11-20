@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
-const user = require('./user.js');
+const users = require('./users.js');
+const schedules = require('./shedules.js');
 
-router.use('/users',user);
+router.use('/users',users);
+router.use('/schedules',schedules);
 
 module.exports = router;
