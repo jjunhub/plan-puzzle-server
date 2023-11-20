@@ -1,12 +1,16 @@
 module.exports = (sequelize, DataTypes) => {
     const Schedule = sequelize.define('Schedule', {
-        userId:{
-            type:DataTypes.STRING(30),
-            allowNULL:false,
+        userId: {
+            type: DataTypes.STRING(30),
+            allowNULL: false
+        },
+        originId: {
+            type: DataTypes.INTEGER,
+            allowNULL: true
         },
         title: {
             type: DataTypes.STRING(30),
-            allowNULL: false,
+            allowNULL: false
         },
         content: {
             type: DataTypes.STRING(1000),
@@ -36,6 +40,18 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'userId',
             onDelete: 'CASCADE'
         })
-    }
+    };
+
+    Schedule.getMaxOriginId = async userId => {
+        if (await Schedule.count()) {
+            return await Schedule.max('originId', {
+                where: {
+                    'userId': userId
+                }
+            });
+        }
+        return 0;
+    };
+
     return Schedule;
 };
