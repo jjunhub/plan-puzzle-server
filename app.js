@@ -3,6 +3,12 @@ const app = express();
 const {sequelize} = require('./models');
 const routes = require('./routes');
 const {errorHandler} = require("./middlewares/errorHandler");
+const session = require('express-session');
+const sessionConfig = require('./config/sessionConfig');
+const dotenv = require('dotenv');
+
+dotenv.config();
+app.use(session(sessionConfig));
 
 sequelize.sync({force:false})
 .then(()=>{
