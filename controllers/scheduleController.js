@@ -20,3 +20,14 @@ exports.createSchedule = async (req, res) => {
         console.log(err);
     }
 };
+
+exports.showSchedules = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const date = req.query.date;
+        const response = await scheduleService.showSchedules(userId, date);
+        res.status(200).json(response);
+    } catch (err) {
+        console.log(err);
+    }
+};
