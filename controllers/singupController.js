@@ -30,3 +30,19 @@ exports.isNicknameDuplicates = async(req,res)=>{
         res.status(500);
     }
 }
+
+exports.loginUser = async (req,res)=> {
+    try {
+        const userData = req.body;
+        const user = await signupService.loginUser(userData);
+
+        req.session.user = {
+            id: user.userId,
+        }
+
+        res.status(200).json("로그인 성공");
+    } catch(err){
+        console.log(err);
+        res.status(401)
+    }
+}
