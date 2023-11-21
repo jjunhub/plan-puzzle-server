@@ -36,3 +36,17 @@ exports.isNicknameDuplicates = async (nickname) =>{
         console.log(err);
     }
 }
+
+exports.loginUser = async (userData) => {
+    const {id, password} = userData;
+    const loginUser = await User.findOne({
+        where:{
+            'userId': id,
+            'userPw': password
+        }
+    });
+    if (loginUser === null) {
+        throw new Error('아이디 또는 비밀번호가 일치하지 않습니다.');
+    }
+    return loginUser;
+}
