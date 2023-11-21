@@ -1,18 +1,28 @@
 // middlewares/errorHandlers.js
-const { LoginError, NotFoundError } = require('../constants/errors');
+const {
+    LoginError,
+    NotFoundError,
+    SignUpError,
+    DuplicateNickNameError,
+    DuplicateIdError
+} = require('../constants/errors');
 
-const errorHandler = ((err, req, res, next) => {
-    if ( err.message === LoginError.MESSAGE ) {
-        res.status(LoginError.CODE).send(LoginError.MESSAGE);
-        return;
+const errorHandlerMap = {
+    [LoginError.MESSAGE]: LoginError,
+    [NotFoundError.MESSAGE]: NotFoundError,
+    [SignUpError.MESSAGE]: SignUpError,
+    [DuplicateNickNameError.MESSAGE]: DuplicateNickNameError,
+    [DuplicateIdError.MESSAGE]: DuplicateIdError
+};
+
+const errorHandler = (err, req, res, next) => {
+    const error = errorHandlerMap[err.message];
+
+    if (error) {
+        res.status(error.CODE).send(error.MESSAGE);
+    } else {
+        res.status(500).send('서버에 오류가 발생하였습니다.');
     }
+};
 
-    if (err.message === NotFoundError.MESSAGE) {
-        res.status(404).send('요청한 페이지를 찾을 수 없습니다.');
-        return;
-    }
-
-    res.status(500).send('서버에 오류가 발생하였습니다.');
-});
-
-module.exports = { LoginError, errorHandler };
+module.exports = {errorHandler};
