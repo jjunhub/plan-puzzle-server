@@ -15,7 +15,7 @@ const checkAuth = async (req, res, next) => {
     if (findUserId === null) {
         res.status(401).send("로그인이 필요합니다.");
     }
-    req.user.id = findUserId.id;
+    req.user= findUserId;
     next();
 }
 
