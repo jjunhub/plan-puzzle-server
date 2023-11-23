@@ -1,13 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
     const Schedule = sequelize.define('Schedule', {
-        userId: {
-            type: DataTypes.STRING(30),
-            allowNULL: false
-        },
-        originId: {
-            type: DataTypes.INTEGER,
-            allowNULL: true
-        },
         title: {
             type: DataTypes.STRING(30),
             allowNULL: false
@@ -27,7 +19,15 @@ module.exports = (sequelize, DataTypes) => {
         endTime: {
             type: DataTypes.TIME,
             allowNULL: false
+        },
+        originId: {
+            type: DataTypes.INTEGER,
+            allowNULL: true
         }
+        // userId: {
+        //     type: DataTypes.STRING(30),
+        //     allowNULL: false
+        // }
     }, {
         charset: 'utf8',
         collate: 'utf8_general_ci',
@@ -37,7 +37,6 @@ module.exports = (sequelize, DataTypes) => {
 
     Schedule.associate = models => {
         Schedule.belongsTo(models.User, {
-            foreignKey: 'userId',
             onDelete: 'CASCADE'
         })
     };
@@ -46,7 +45,7 @@ module.exports = (sequelize, DataTypes) => {
         if (await Schedule.count()) {
             return await Schedule.max('originId', {
                 where: {
-                    'userId': userId
+                    'UserId': userId
                 }
             });
         }

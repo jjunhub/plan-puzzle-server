@@ -72,7 +72,7 @@ const deleteSchedule = async (userId, scheduleId, option) => {
 async function findSchedule(userId, scheduleId) {
     const schedule = await Schedule.findOne({
         where: {
-            'userId': userId,
+            'UserId': user_id,
             'id': scheduleId
         }
     });
@@ -122,7 +122,7 @@ async function deleteAll(userId, scheduleId) {
 
     await Schedule.destroy({
         where: {
-            'userId': userId,
+            'UserId': user_id,
             'originId': originId
         }
     })
@@ -135,7 +135,7 @@ async function deleteAfterDay(userId, scheduleId) {
 
     await Schedule.destroy({
         where: {
-            'userId': userId,
+            'UserId': user_id,
             'originId': originId,
             'date': {
                 [Op.gte]: date
