@@ -1,45 +1,29 @@
 const scheduleService = require('../services/scheduleService');
 
 exports.loadHome = async (req, res) => {
-    try {
-        const user_id = req.user.id;
-        const response = await scheduleService.loadHome(user_id);
-        res.status(200).json(response);
-    } catch (err) {
-        console.log(err);
-    }
+    const userId = req.session.user.userId;
+    const response = await scheduleService.loadHome(userId);
+    res.status(200).json(response);
 };
 
 exports.createSchedule = async (req, res) => {
-    try {
-        const user_id = req.user.id;
-        const scheduleData = req.body;
-        await scheduleService.createSchedule(user_id, scheduleData);
-        res.status(201).send();
-    } catch (err) {
-        console.log(err);
-    }
+    const userId = req.session.user.userId;
+    const scheduleData = req.body;
+    await scheduleService.createSchedule(userId, scheduleData);
+    res.status(201).send("일정이 성공적으로 추가되었습니다.");
 };
 
 exports.showSchedules = async (req, res) => {
-    try {
-        const user_id = req.user.id;
-        const date = req.query.date;
-        const response = await scheduleService.showSchedules(user_id, date);
-        res.status(200).json(response);
-    } catch (err) {
-        console.log(err);
-    }
+    const userId = req.session.user.userId;
+    const date = req.query.date;
+    const response = await scheduleService.showSchedules(userId, date);
+    res.status(200).json(response);
 };
 
 exports.deleteSchedule = async (req, res) => {
-    try {
-        const user_id = req.user.id;
-        const scheduleId = req.params.scheduleId;
-        const option = req.body;
-        await scheduleService.deleteSchedule(user_id, scheduleId, option);
-        res.status(200).send();
-    } catch (err) {
-        console.log(err);
-    }
+    const userId = req.session.user.userId;
+    const scheduleId = req.params.scheduleId;
+    const option = req.body;
+    await scheduleService.deleteSchedule(userId, scheduleId, option);
+    res.status(200).send("일정이 성공적으로 삭제되었습니다.");
 }
