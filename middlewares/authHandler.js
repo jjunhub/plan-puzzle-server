@@ -9,13 +9,13 @@ const checkAuth = async (req, res, next) => {
     }
 
     const findUserId = await User.findOne({
-        where: {'userId': user.id}
+        attributes:['id'],
+        where: {'id': user.id}
     });
 
     if (findUserId === null) {
         res.status(401).send("로그인이 필요합니다.");
     }
-    req.user= findUserId;
     next();
 }
 

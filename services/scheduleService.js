@@ -12,7 +12,7 @@ const loadHome = async (userId) => {
     const schedules = await showSchedules(userId, today);
     const nextSchedules = await Schedule.findAll({
         where: {
-            'userId': userId,
+            'UserId': userId,
             'date': today,
             'startTime': {
                 [Op.gte]: now.format('HH:mm')
@@ -31,7 +31,7 @@ const showSchedules = async (userId, date) => {
     const startDayOfWeek = momentDate.clone().startOf('week').format('YYYY-MM-DD');
     const endDayOfWeek = momentDate.clone().endOf('week').format('YYYY-MM-DD');
 
-    return await findSchedules(userId, startDayOfWeek, endDayOfWeek);
+    return await findSchedulesByDate(userId, startDayOfWeek, endDayOfWeek);
 }
 
 const createSchedule = async (userId, scheduleData) => {
@@ -45,7 +45,7 @@ const createSchedule = async (userId, scheduleData) => {
     while (!momentStartDate.isAfter(momentEndDate)) {
         const date = momentStartDate.format('YYYY-MM-DD');
         await Schedule.create({
-            userId: userId,
+            UserId: userId,
             originId: maxOriginId,
             title: title,
             date: date,
@@ -57,22 +57,33 @@ const createSchedule = async (userId, scheduleData) => {
 };
 
 const deleteSchedule = async (userId, scheduleId, option) => {
-    await findSchedule(userId, scheduleId);
+    const schedule = await findScheduleById(userId, scheduleId);
     const {afterDay, total} = option;
 
     if (total) {
-        await deleteAll(userId, scheduleId);
+        await deleteAll(userId, schedule);
     } else if (afterDay) {
-        await deleteAfterDay(userId, scheduleId);
+        await deleteAfterDay(userId, schedule);
     } else {
-        await deleteOne(userId, scheduleId);
+        await deleteOne(userId, schedule);
     }
 };
 
-async function findSchedule(userId, scheduleId) {
+async function findSchedulesByDate(userId, startDate, endDate) {
+    return await Schedule.findAll({
+        where: {
+            'UserId': userId,
+            'date': {
+                [Op.between]: [startDate, endDate]
+            }
+        }
+    });
+}
+
+async function findScheduleById(userId, scheduleId) {
     const schedule = await Schedule.findOne({
         where: {
-            'UserId': user_id,
+            'UserId': userId,
             'id': scheduleId
         }
     });
@@ -80,8 +91,44 @@ async function findSchedule(userId, scheduleId) {
     if (schedule === null) {
         throw new Error(ScheduleNotFoundError.MESSAGE);
     }
-
     return schedule;
+}
+
+async function deleteOne(userId, schedule) {
+    const id = schedule.id;
+
+    await Schedule.destroy({
+        where: {
+            'UserId': userId,
+            'id': id
+        }
+    });
+}
+
+async function deleteAll(userId, schedule) {
+    const originId = schedule.originId;
+
+    await Schedule.destroy({
+        where: {
+            'UserId': userId,
+            'originId': originId
+        }
+    })
+}
+
+async function deleteAfterDay(userId, schedule) {
+    const originId = schedule.originId;
+    const date = schedule.date;
+
+    await Schedule.destroy({
+        where: {
+            'UserId': userId,
+            'originId': originId,
+            'date': {
+                [Op.gte]: date
+            }
+        }
+    })
 }
 
 async function validateDate(...dates) {
@@ -90,58 +137,6 @@ async function validateDate(...dates) {
             throw new Error(InValidDateError.MESSAGE);
         }
     }
-}
-
-
-async function findSchedules(userId, startDate, endDate) {
-    return await Schedule.findAll({
-        where: {
-            'userId': userId,
-            'date': {
-                [Op.between]: [startDate, endDate]
-            }
-        }
-    });
-}
-
-
-async function deleteOne(userId, scheduleId) {
-    await findSchedule(userId, scheduleId);
-
-    await Schedule.destroy({
-        where: {
-            'userId': userId,
-            'id': scheduleId
-        }
-    });
-}
-
-async function deleteAll(userId, scheduleId) {
-    const schedule = await findSchedule(userId, scheduleId);
-    const originId = schedule.originId;
-
-    await Schedule.destroy({
-        where: {
-            'UserId': user_id,
-            'originId': originId
-        }
-    })
-}
-
-async function deleteAfterDay(userId, scheduleId) {
-    const schedule = await findSchedule(userId, scheduleId);
-    const originId = schedule.originId;
-    const date = schedule.date;
-
-    await Schedule.destroy({
-        where: {
-            'UserId': user_id,
-            'originId': originId,
-            'date': {
-                [Op.gte]: date
-            }
-        }
-    })
 }
 
 module.exports = {loadHome, createSchedule, showSchedules, deleteSchedule};

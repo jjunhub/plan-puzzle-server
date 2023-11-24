@@ -1,7 +1,7 @@
 const db = require('../models/index');
 const Recruit = db.Recruit;
 
-exports.createRecruit = async (user_id, imagePath, recruitData) => {
+exports.createRecruit = async (userId, imagePath, recruitData) => {
     const {
         title,
         content,
@@ -29,7 +29,7 @@ exports.createRecruit = async (user_id, imagePath, recruitData) => {
         startTime: startTime || null,
         endTime: endTime || null,
         color: color,
-        UserId: user_id,
+        UserId: userId,
         owner: owner,
         ...(imagePath && {imagePath: imagePath})
     });
