@@ -7,9 +7,10 @@ const session = require('express-session');
 const sessionConfig = require('./config/sessionConfig');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const corsConfig = require('./config/corsConfig');
 
 dotenv.config();
-app.use(cors());
+app.use(cors(corsConfig));
 app.use(session(sessionConfig));
 
 sequelize.sync({force:false})
