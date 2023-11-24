@@ -8,7 +8,7 @@ const checkAuth = require('../middlewares/authHandler');
 const wrapAsync = require('../middlewares/wrapAsync');
 
 router.use('/users', users);
-router.use('/schedules',wrapAsync(checkAuth), schedules);
+router.use('/schedules', wrapAsync(checkAuth), schedules);
 router.use('/recruits', wrapAsync(checkAuth), recruits);
 
 module.exports = router;
