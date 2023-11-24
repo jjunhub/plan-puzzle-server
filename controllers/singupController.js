@@ -25,7 +25,7 @@ const loginUser = async (req, res) => {
     const user = await signupService.loginUser(userData);
 
     req.session.user = {
-        id: user.userId,
+        id: user.id
     }
 
     res.status(200).json("로그인 성공");
