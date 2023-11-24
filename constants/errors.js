@@ -45,6 +45,7 @@ module.exports = {
     DuplicateNickNameError,
     SignUpError,
     ScheduleNotFoundError,
-    InValidDateError
+    InValidDateError,
+    NotAuthorizedError
 };
 
