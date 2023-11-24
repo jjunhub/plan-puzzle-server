@@ -30,5 +30,10 @@ const loginUser = async (req, res) => {
 
     res.status(200).json("로그인 성공");
 }
+const logoutUser = async (req, res) => {
+    req.session.destroy();
+    res.status(200).json("로그아웃 성공");
+}
 
-module.exports = {registerUser, isIdDuplicates, isNicknameDuplicates, loginUser};
+
+module.exports = {registerUser, isIdDuplicates, isNicknameDuplicates, loginUser, logoutUser};

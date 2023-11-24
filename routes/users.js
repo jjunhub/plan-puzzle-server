@@ -8,5 +8,6 @@ router.post('/', wrapAsync(signUpController.registerUser));
 router.get('/id/:id', wrapAsync(signUpController.isIdDuplicates));
 router.get('/nickname/:nickname', wrapAsync(signUpController.isNicknameDuplicates));
 router.post('/login', wrapAsync(signUpController.loginUser));
+router.post('/logout', wrapAsync(signUpController.logoutUser));
 
 module.exports = router;
