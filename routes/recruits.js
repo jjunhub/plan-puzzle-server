@@ -20,5 +20,6 @@ const upload = multer({
 });
 
 router.post('/', upload.single('image'), recruitController.createRecruit);
+router.get('/', recruitController.showRecruits);
 
 module.exports = router;

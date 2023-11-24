@@ -1,7 +1,8 @@
 const db = require('../models/index');
 const Recruit = db.Recruit;
+const User = db.User;
 
-exports.createRecruit = async (userId, imagePath, recruitData) => {
+const createRecruit = async (userId, imagePath, recruitData) => {
     const {
         title,
         content,
@@ -17,7 +18,7 @@ exports.createRecruit = async (userId, imagePath, recruitData) => {
         color
     } = recruitData;
 
-    const newRecruit = await Recruit.create({
+    return newRecruit = await Recruit.create({
         title: title,
         content: content,
         peopleNum: peopleNum,
@@ -29,8 +30,18 @@ exports.createRecruit = async (userId, imagePath, recruitData) => {
         startTime: startTime || null,
         endTime: endTime || null,
         color: color,
-        UserId: userId,
         owner: owner,
+        UserId: userId,
         ...(imagePath && {imagePath: imagePath})
     });
 }
+
+const showRecruits = async userId => {
+    return await Recruit.findAll({
+        where: {
+            'UserId': userId
+        }
+    });
+}
+
+module.exports = {createRecruit, showRecruits};
