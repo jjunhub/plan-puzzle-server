@@ -2,6 +2,7 @@ const express = require('express');
 const recruitController = require('../controllers/recruitController');
 const multer = require("multer");
 const path = require('path');
+const wrapAsync = require("../middlewares/wrapAsync");
 
 const router = express.Router();
 
@@ -19,7 +20,7 @@ const upload = multer({
     })
 });
 
-router.post('/', upload.single('image'), recruitController.createRecruit);
-router.get('/', recruitController.showRecruits);
+router.post('/', upload.single('image'), wrapAsync(recruitController.createRecruit));
+router.get('/', recruitController.getRecruits);
 
 module.exports = router;

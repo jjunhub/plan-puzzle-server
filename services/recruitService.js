@@ -1,6 +1,8 @@
 const db = require('../models/index');
+const {QueryTypes, Op, INTEGER} = require("sequelize");
+const {sequelize} = require("../models/index");
+
 const Recruit = db.Recruit;
-const User = db.User;
 
 const createRecruit = async (userId, imagePath, recruitData) => {
     const {
@@ -18,7 +20,7 @@ const createRecruit = async (userId, imagePath, recruitData) => {
         color
     } = recruitData;
 
-    return newRecruit = await Recruit.create({
+    return await Recruit.create({
         title: title,
         content: content,
         peopleNum: peopleNum,
@@ -36,12 +38,20 @@ const createRecruit = async (userId, imagePath, recruitData) => {
     });
 }
 
-const showRecruits = async userId => {
-    return await Recruit.findAll({
+const getRecruits = async (nextId = 999) => {
+    const pageSize = 10;
+    const recruits = await Recruit.findAll({
         where: {
-            'UserId': userId
-        }
+            id: {
+                [Op.lt]: nextId
+            }
+        },
+        order: [['id', 'DESC']],
+        limit: pageSize,
+        raw: true
     });
+    const maxId = nextId - pageSize < 0 ? 0 : nextId - pageSize;
+    return {recruits: recruits, maxId: maxId};
 }
 
-module.exports = {createRecruit, showRecruits};
+module.exports = {createRecruit, getRecruits};
