@@ -9,7 +9,7 @@ const checkAuth = async (req, res, next) => {
     }
 
     const findUserId = await User.findOne({
-        where: {'userId': user.userId}
+        where: {'userId': user.id}
     });
 
     if (findUserId === null) {
