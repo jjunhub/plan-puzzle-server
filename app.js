@@ -8,10 +8,12 @@ const sessionConfig = require('./config/sessionConfig');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const corsConfig = require('./config/corsConfig');
+const morgan = require('morgan');
 
 dotenv.config();
 app.use(cors(corsConfig));
 app.use(session(sessionConfig));
+app.use(morgan('dev'));
 
 sequelize.sync({force:false})
 .then(()=>{
