@@ -33,10 +33,6 @@ module.exports = (sequelize, DataTypes) => {
                 isUrl: true
             }
         }
-        // recruitId:{
-        //     type:DataTypes.INTEGER,
-        //     allowNULL:true
-        // }
     }, {
         charset: 'utf8',
         collate: 'utf8_general_ci',
@@ -46,9 +42,7 @@ module.exports = (sequelize, DataTypes) => {
 
     User.associate = models => {
         User.hasMany(models.Schedule);
-        User.belongsToMany(models.Recruit, {
-            through: 'RecruitUser',
-        });
+        User.hasMany(models.Recruit);
     };
     return User;
 };

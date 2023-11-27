@@ -58,10 +58,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.ENUM('User', 'Chanel'),
             allowNULL: false
         }
-        // userId: {
-        //     type: DataTypes.STRING(30),
-        //     allowNULL: false
-        // }
     }, {
         charset: 'utf8',
         collate: 'utf8_general_ci',
@@ -70,8 +66,8 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     Recruit.associate = models => {
-        Recruit.belongsToMany(models.User, {
-            through: 'RecruitUser'
+        Recruit.belongsTo(models.User, {
+            onDelete: 'CASCADE'
         });
     };
     return Recruit;
