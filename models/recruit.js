@@ -67,8 +67,14 @@ module.exports = (sequelize, DataTypes) => {
 
     Recruit.associate = models => {
         Recruit.belongsTo(models.User, {
-            onDelete: 'CASCADE'
+            onDelete: 'CASCADE',
+            foreignKey:'WriterId'
         });
-    };
+        Recruit.belongsToMany(models.User,{
+            through:'RecruitUser',
+            as:'Users',
+            timestamps: false
+        });
+    }
     return Recruit;
 };

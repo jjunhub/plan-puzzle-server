@@ -3,6 +3,8 @@ const {QueryTypes, Op, INTEGER} = require("sequelize");
 const {sequelize} = require("../models/index");
 
 const Recruit = db.Recruit;
+const User = db.User;
+const Schedule = db.Schedule;
 
 //pageSize 상수
 const pageSize = 10;
@@ -35,7 +37,7 @@ const createRecruit = async (userId, imagePath, recruitData) => {
         endTime: endTime || null,
         color: color,
         owner: owner,
-        UserId: userId,
+        WriterId: userId,
         ...(imagePath && {imagePath: imagePath})
     });
 }
@@ -68,8 +70,8 @@ const getPagedRecruits = async (nextId) => {
 const deleteRecruit = async (userId, recruitId) => {
     const destroyNum = await Recruit.destroy({
         where: {
-            id: recruitId,
-            userId: userId
+            'id': recruitId,
+            'WriterId': userId
         }
     });
 
@@ -79,19 +81,68 @@ const deleteRecruit = async (userId, recruitId) => {
     }
 }
 
-const updateRecruitState = async(userId, recruitId, state)=> {
+const updateRecruitState = async (userId, recruitId, state) => {
     const recruitNum = await Recruit.update({
         state: state
     }, {
         where: {
             id: recruitId,
-            UserId: userId
+            WriterId: userId
         }
     });
-    if(!recruitNum){
+    if (!recruitNum) {
         //throw new Error()
         //해당하는 userId,recruitId가 없음
     }
 }
+const participateRecruit = async (userId, recruitId) => {
+    const user = await User.findByPk(userId);
+    const recruit = await Recruit.findOne({
+        where: {
+            id: recruitId,
+            WriterId: {
+                [Op.ne]: userId
+            }
+        }
+    });
+    if (!recruit) {
+        return;
+        //에러처리
+        //작성자가 참여하려고 했거나, recruit이 없음(삭제됨?)
+    }
+    await recruit.addUsers(user);
+}
+const getAvailableTime = async (recruitId) => {
+    const recruitUsers = await Recruit.findOne({
+        where: {
+            id: recruitId
+        },
+        include: [{
+            model: User,
+            as: 'Users',
+            through: 'RecruitUser',
+            attributes: ['id']
+        }],
+    });
 
-module.exports = {createRecruit, getInitialPageData, getPagedRecruits, deleteRecruit, updateRecruitState};
+    const userIds = recruitUsers.Users.map(user => user.id);
+
+    return await Schedule.findAll({
+        attributes: ['startTime', 'endTime'],
+        where: {
+            UserId: {
+                [Op.in]: userIds
+            }
+        }
+    });
+}
+
+module.exports = {
+    createRecruit,
+    getInitialPageData,
+    getPagedRecruits,
+    deleteRecruit,
+    updateRecruitState,
+    participateRecruit,
+    getAvailableTime
+};
