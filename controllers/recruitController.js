@@ -9,9 +9,30 @@ const createRecruit = async (req, res) => {
     res.status(201).json(response);
 }
 
-const getRecruits = async (req, res) => {
-    const nextId = parseInt(req.query.maxId);
-    const response = await recruitService.getRecruits(nextId);
+const getRecruitData = async (req, res) => {
+    let response;
+
+    const nextId = parseInt(req.query.minId);
+
+    if (nextId) response = await recruitService.getPagedRecruits(nextId);
+    else response = await recruitService.getInitialPageData();
+
     res.status(200).json(response);
 }
-module.exports = {createRecruit, getRecruits};
+
+const deleteRecruit = async (req, res) => {
+    const recruitId = req.params.recruitId;
+    const userId = req.session.user.id;
+    await recruitService.deleteRecruit(userId, recruitId);
+    res.status(200).send('모집글 삭제 완료');
+}
+
+const updateRecruitState = async(req,res)=>{
+    const recruitId = req.params.recruitId;
+    const userId = req.session.user.id;
+    const state = req.query.state;
+    await recruitService.updateRecruitState(userId,recruitId,state);
+    res.status(200).send('모집글 상태 변경 완료');
+}
+
+module.exports = {createRecruit, getRecruitData, deleteRecruit,updateRecruitState};

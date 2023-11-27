@@ -21,6 +21,8 @@ const upload = multer({
 });
 
 router.post('/', upload.single('image'), wrapAsync(recruitController.createRecruit));
-router.get('/', recruitController.getRecruits);
+router.get('/', recruitController.getRecruitData);
+router.delete('/:recruitId',recruitController.deleteRecruit);
+router.put('/:recruitId',recruitController.updateRecruitState);
 
 module.exports = router;
