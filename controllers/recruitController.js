@@ -27,12 +27,32 @@ const deleteRecruit = async (req, res) => {
     res.status(200).send('모집글 삭제 완료');
 }
 
-const updateRecruitState = async(req,res)=>{
+const updateRecruitState = async (req, res) => {
     const recruitId = req.params.recruitId;
     const userId = req.session.user.id;
     const state = req.query.state;
-    await recruitService.updateRecruitState(userId,recruitId,state);
+    await recruitService.updateRecruitState(userId, recruitId, state);
     res.status(200).send('모집글 상태 변경 완료');
 }
 
-module.exports = {createRecruit, getRecruitData, deleteRecruit,updateRecruitState};
+const participateRecruit = async (req, res) => {
+    const recruitId = req.params.recruitId;
+    const userId = req.session.user.id;
+    await recruitService.participateRecruit(userId, recruitId);
+    res.status(200).send('모집글 참여 완료');
+}
+
+const getAvailableTime = async(req,res)=>{
+    const recruitId = req.params.recruitId;
+    const response = await recruitService.getAvailableTime(recruitId);
+    res.status(200).json(response);
+}
+
+module.exports = {
+    createRecruit,
+    getRecruitData,
+    deleteRecruit,
+    updateRecruitState,
+    participateRecruit,
+    getAvailableTime
+};

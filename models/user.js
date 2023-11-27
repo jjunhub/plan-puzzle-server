@@ -42,7 +42,15 @@ module.exports = (sequelize, DataTypes) => {
 
     User.associate = models => {
         User.hasMany(models.Schedule);
-        User.hasMany(models.Recruit);
+        User.hasMany(models.Recruit,{
+            as:'MyRecruits',
+            foreignKey:'WriterId'
+        });
+        User.belongsToMany(models.Recruit,{
+            through:'RecruitUser',
+            as:'Recruits',
+            timestamps: false
+        });
     };
     return User;
 };

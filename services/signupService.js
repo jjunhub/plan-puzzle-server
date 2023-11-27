@@ -21,7 +21,7 @@ const registerUser = async (userData) => {
 
 const isIdDuplicates = async (id) => {
     const findUserId = await User.findOne({
-        where: {'userId': id}
+        where: {userId: id}
     });
 
     if (findUserId !== null) {
@@ -33,7 +33,7 @@ const isIdDuplicates = async (id) => {
 
 const isNicknameDuplicates = async (nickname) => {
     const findUserNickname = await User.findOne({
-        where: {'nickname': nickname}
+        where: {nickname: nickname}
     });
 
     if (findUserNickname !== null) {
@@ -47,8 +47,8 @@ const loginUser = async (userData) => {
     const {id, password} = userData;
     const loginUser = await User.findOne({
         where: {
-            'userId': id,
-            'userPw': password
+            userId: id,
+            userPw: password
         }
     });
 

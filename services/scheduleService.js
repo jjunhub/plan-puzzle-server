@@ -12,9 +12,9 @@ const loadHome = async (userId) => {
     const schedules = await showSchedules(userId, today);
     const nextSchedules = await Schedule.findAll({
         where: {
-            'UserId': userId,
-            'date': today,
-            'startTime': {
+            UserId: userId,
+            date: today,
+            startTime: {
                 [Op.gte]: now.format('HH:mm')
             }
         }
@@ -72,8 +72,8 @@ const deleteSchedule = async (userId, scheduleId, option) => {
 async function findSchedulesByDate(userId, startDate, endDate) {
     return await Schedule.findAll({
         where: {
-            'UserId': userId,
-            'date': {
+            UserId: userId,
+            date: {
                 [Op.between]: [startDate, endDate]
             }
         }
@@ -83,8 +83,8 @@ async function findSchedulesByDate(userId, startDate, endDate) {
 async function findScheduleById(userId, scheduleId) {
     const schedule = await Schedule.findOne({
         where: {
-            'UserId': userId,
-            'id': scheduleId
+            UserId: userId,
+            id: scheduleId
         }
     });
 
@@ -99,8 +99,8 @@ async function deleteOne(userId, schedule) {
 
     await Schedule.destroy({
         where: {
-            'UserId': userId,
-            'id': id
+            UserId: userId,
+            id: id
         }
     });
 }
@@ -110,8 +110,8 @@ async function deleteAll(userId, schedule) {
 
     await Schedule.destroy({
         where: {
-            'UserId': userId,
-            'originId': originId
+            UserId: userId,
+            originId: originId
         }
     })
 }
@@ -122,9 +122,9 @@ async function deleteAfterDay(userId, schedule) {
 
     await Schedule.destroy({
         where: {
-            'UserId': userId,
-            'originId': originId,
-            'date': {
+            UserId: userId,
+            originId: originId,
+            date: {
                 [Op.gte]: date
             }
         }
