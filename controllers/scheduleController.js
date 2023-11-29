@@ -8,8 +8,12 @@ const loadHome = async (req, res) => {
 
 const createSchedule = async (req, res) => {
     const userId = req.session.user.id;
-    console.log("createSchedule" + userId)
     const scheduleData = req.body;
+    const alreadyExistSchedule = await scheduleService.validateCreateSchedule(userId, scheduleData);
+    if (alreadyExistSchedule.length !== 0) {
+        res.status(200).json(alreadyExistSchedule);
+        return;
+    }
     await scheduleService.createSchedule(userId, scheduleData);
     res.status(201).send("일정이 성공적으로 추가되었습니다.");
 };

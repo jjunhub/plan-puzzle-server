@@ -1,6 +1,6 @@
 const db = require('../models/index');
-const {QueryTypes, Op, INTEGER} = require("sequelize");
-const {sequelize} = require("../models/index");
+const {Op, INTEGER} = require("sequelize");
+const moment = require('moment');
 
 const Recruit = db.Recruit;
 const User = db.User;
@@ -112,7 +112,8 @@ const participateRecruit = async (userId, recruitId) => {
     }
     await recruit.addUsers(user);
 }
-const getAvailableTime = async (recruitId) => {
+const getAvailableTime = async (recruitId, timeData) => {
+    const {startDate, endDate, startTime, endTime} = timeData;
     const recruitUsers = await Recruit.findOne({
         where: {
             id: recruitId
@@ -126,16 +127,41 @@ const getAvailableTime = async (recruitId) => {
     });
 
     const userIds = recruitUsers.Users.map(user => user.id);
-
-    return await Schedule.findAll({
-        attributes: ['startTime', 'endTime'],
+    const schedules = await Schedule.findAll({
+        attributes: ['date', 'startTime', 'endTime'],
         where: {
             UserId: {
                 [Op.in]: userIds
+            },
+            date: {
+                [Op.between]: [startDate, endDate]
+            },
+            startTime: {
+                [Op.gte]: startTime
+            },
+            endTime: {
+                [Op.lte]: endTime
             }
         }
     });
 }
+
+function generateTimeSlots(startTime, endTime, interval, schedules) {
+    const minutes = 30;
+    const momentStartTime = moment(startTime, 'HH:mm');
+    const momentEndTime = moment(endTime, 'HH:mm');
+
+    const timeSlots = [];
+    let currentTime = moment(momentStartTime);
+
+    while (currentTime < momentEndTime) {
+        timeSlots.push(currentTime.format('HH:mm'));
+        currentTime.add(minutes, 'minutes');
+    }
+
+    return timeSlots;
+}
+
 
 module.exports = {
     createRecruit,

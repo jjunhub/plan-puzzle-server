@@ -42,9 +42,10 @@ const participateRecruit = async (req, res) => {
     res.status(200).send('모집글 참여 완료');
 }
 
-const getAvailableTime = async(req,res)=>{
+const getAvailableTime = async (req, res) => {
     const recruitId = req.params.recruitId;
-    const response = await recruitService.getAvailableTime(recruitId);
+    const timeData = req.body;
+    const response = await recruitService.getAvailableTime(recruitId, timeData);
     res.status(200).json(response);
 }
 

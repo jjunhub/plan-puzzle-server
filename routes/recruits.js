@@ -27,6 +27,6 @@ router.delete('/:recruitId',recruitController.deleteRecruit);
 router.put('/:recruitId',recruitController.updateRecruitState);
 router.post('/:recruitId',recruitController.participateRecruit);
 
-router.get('/:recruitId/times',recruitController.getAvailableTime);
+router.post('/:recruitId/times',recruitController.getAvailableTime);
 
 module.exports = router;
