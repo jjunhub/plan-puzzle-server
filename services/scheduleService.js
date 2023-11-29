@@ -51,10 +51,22 @@ const validateCreateSchedule = async (userId, scheduleData) => {
                 [Op.or]: [
                     {
                         startTime: {
-                            [Op.between]: [startTime, endTime]
+                            [Op.gte]: startTime,
+                            [Op.lt]: endTime
+                        }
+                    },
+                    {
+                        endTime: {
+                            [Op.gt]: startTime,
+                            [Op.lte]: endTime
+                        }
+                    },
+                    {
+                        startTime: {
+                            [Op.lte]: startTime
                         },
                         endTime: {
-                            [Op.between]: [startTime, endTime]
+                            [Op.gte]: endTime
                         }
                     }
                 ]

@@ -45,8 +45,9 @@ const participateRecruit = async (req, res) => {
 const getAvailableTime = async (req, res) => {
     const recruitId = req.params.recruitId;
     const timeData = req.body;
-    const response = await recruitService.getAvailableTime(recruitId, timeData);
-    res.status(200).json(response);
+    const timeSlots = await recruitService.getAvailableTime(recruitId, timeData);
+    res.status(200).json(timeSlots);
+    //timeSlots이 비었을 때, 즉 가능한 시간이 없을때는 빈 배열 반환
 }
 
 module.exports = {

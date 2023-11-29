@@ -24,7 +24,7 @@ const createRecruit = async (userId, imagePath, recruitData) => {
         color
     } = recruitData;
 
-    return await Recruit.create({
+    const recruit = await Recruit.create({
         title: title,
         content: content,
         peopleNum: peopleNum,
@@ -40,6 +40,8 @@ const createRecruit = async (userId, imagePath, recruitData) => {
         WriterId: userId,
         ...(imagePath && {imagePath: imagePath})
     });
+    const user = await User.findByPk(userId);
+    recruit.addUsers(user);
 }
 
 const getInitialPageData = async () => {
@@ -113,7 +115,7 @@ const participateRecruit = async (userId, recruitId) => {
     await recruit.addUsers(user);
 }
 const getAvailableTime = async (recruitId, timeData) => {
-    const {startDate, endDate, startTime, endTime} = timeData;
+    const {startDate, endDate, startTime, endTime, interval} = timeData;
     const recruitUsers = await Recruit.findOne({
         where: {
             id: recruitId
@@ -127,38 +129,60 @@ const getAvailableTime = async (recruitId, timeData) => {
     });
 
     const userIds = recruitUsers.Users.map(user => user.id);
-    const schedules = await Schedule.findAll({
-        attributes: ['date', 'startTime', 'endTime'],
-        where: {
-            UserId: {
-                [Op.in]: userIds
-            },
-            date: {
-                [Op.between]: [startDate, endDate]
-            },
-            startTime: {
-                [Op.gte]: startTime
-            },
-            endTime: {
-                [Op.lte]: endTime
-            }
-        }
-    });
-}
 
-function generateTimeSlots(startTime, endTime, interval, schedules) {
-    const minutes = 30;
-    const momentStartTime = moment(startTime, 'HH:mm');
-    const momentEndTime = moment(endTime, 'HH:mm');
+    const momentStartDate = moment(startDate, 'YYYY-MM-DD');
+    const momentEndDate = moment(endDate, 'YYYY-MM-DD');
 
     const timeSlots = [];
-    let currentTime = moment(momentStartTime);
 
-    while (currentTime < momentEndTime) {
-        timeSlots.push(currentTime.format('HH:mm'));
-        currentTime.add(minutes, 'minutes');
+    while (!momentStartDate.isAfter(momentEndDate)) {
+        const date = momentStartDate.format('YYYY-MM-DD');
+        const momentStartTime = moment(startTime, 'HH:mm');
+        const momentEndTime = moment(endTime, 'HH:mm').subtract(interval, 'minutes');
+
+        while (!momentStartTime.isAfter(momentEndTime)) {
+            const currentStartTime = momentStartTime.clone().format('HH:mm');
+            const currentEndTime = momentStartTime.clone().add(interval, 'minutes').format('HH:mm');
+
+            const findSchedule = await Schedule.findOne({
+                where: {
+                    UserId: {
+                        [Op.in]: userIds
+                    },
+                    date: date,
+                    [Op.or]: [
+                        //스케줄 < time
+                        {
+                            startTime: {
+                                [Op.gte]:currentStartTime,
+                                [Op.lt]:currentEndTime
+                            }
+                        },
+                        {
+                            endTime: {
+                                [Op.gt]:currentStartTime,
+                                [Op.lte]:currentEndTime
+                            }
+                        },
+                        //스케줄 > time
+                        {
+                            startTime: {
+                                [Op.lte]:currentStartTime
+                            },
+                            endTime: {
+                                [Op.gte]:currentEndTime
+                            }
+                        }
+                    ]
+                }
+            });
+            if (!findSchedule) {
+                timeSlots.push({date: date, startTime: currentStartTime, endTime: currentEndTime});
+            }
+            momentStartTime.add(30, 'minutes');
+        }
+        momentStartDate.add(1, 'days');
     }
-
     return timeSlots;
 }
 
