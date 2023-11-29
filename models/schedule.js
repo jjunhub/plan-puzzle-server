@@ -20,6 +20,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TIME,
             allowNULL: false
         },
+        color: {
+            type: DataTypes.STRING(8),
+            allowNULL: false
+        },
         originId: {
             type: DataTypes.INTEGER,
             allowNULL: true

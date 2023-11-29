@@ -22,7 +22,7 @@ const loadHome = async (userId) => {
 
     return {schedules: schedules, nextSchedules: nextSchedules};
     // subscirbNotices 추가해야함 나중에 모집글 + 채널 완성하면
-};
+}
 
 const showSchedules = async (userId, date) => {
     await validateDate(date);
@@ -34,8 +34,43 @@ const showSchedules = async (userId, date) => {
     return await findSchedulesByDate(userId, startDayOfWeek, endDayOfWeek);
 }
 
-const createSchedule = async (userId, scheduleData) => {
+const validateCreateSchedule = async (userId, scheduleData) => {
     const {startDate, endDate, startTime, endTime, repeatPeriod, title} = scheduleData;
+
+    const momentStartDate = moment(startDate, 'YYYY-MM-DD');
+    const momentEndDate = moment(endDate, 'YYYY-MM-DD');
+
+    const alreadyExistSchedules = [];
+    while (!momentStartDate.isAfter(momentEndDate)) {
+        const date = momentStartDate.format('YYYY-MM-DD');
+        const findSchedule = await Schedule.findOne({
+            attributes: ['title', 'date'],
+            where: {
+                UserId: userId,
+                date: date,
+                [Op.or]: [
+                    {
+                        startTime: {
+                            [Op.between]: [startTime, endTime]
+                        },
+                        endTime: {
+                            [Op.between]: [startTime, endTime]
+                        }
+                    }
+                ]
+            }
+        });
+        if (findSchedule) {
+            alreadyExistSchedules.push(findSchedule);
+        }
+        momentStartDate.add(repeatPeriod, 'days');
+    }
+    return alreadyExistSchedules;
+}
+
+
+const createSchedule = async (userId, scheduleData) => {
+    const {startDate, endDate, startTime, endTime, repeatPeriod, title, content, color} = scheduleData;
     const maxOriginId = await Schedule.getMaxOriginId(userId) + 1;
 
     await validateDate(startDate, endDate)
@@ -48,13 +83,15 @@ const createSchedule = async (userId, scheduleData) => {
             UserId: userId,
             originId: maxOriginId,
             title: title,
+            content: content,
             date: date,
             startTime: startTime,
-            endTime: endTime
+            endTime: endTime,
+            color: color
         });
         momentStartDate.add(repeatPeriod, 'days');
     }
-};
+}
 
 const deleteSchedule = async (userId, scheduleId, option) => {
     const schedule = await findScheduleById(userId, scheduleId);
@@ -67,7 +104,7 @@ const deleteSchedule = async (userId, scheduleId, option) => {
     } else {
         await deleteOne(userId, schedule);
     }
-};
+}
 
 async function findSchedulesByDate(userId, startDate, endDate) {
     return await Schedule.findAll({
@@ -139,4 +176,4 @@ async function validateDate(...dates) {
     }
 }
 
-module.exports = {loadHome, createSchedule, showSchedules, deleteSchedule};
+module.exports = {loadHome, createSchedule, showSchedules, deleteSchedule, validateCreateSchedule};
