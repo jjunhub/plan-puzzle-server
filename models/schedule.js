@@ -2,31 +2,31 @@ module.exports = (sequelize, DataTypes) => {
     const Schedule = sequelize.define('Schedule', {
         title: {
             type: DataTypes.STRING(30),
-            allowNULL: false
+            allowNull: false
         },
         content: {
             type: DataTypes.STRING(1000),
-            allowNULL: true
+            allowNull: true
         },
         date: {
             type: DataTypes.DATEONLY,
-            allowNULL: false
+            allowNull: false
         },
         startTime: {
             type: DataTypes.TIME,
-            allowNULL: false
+            allowNull: false
         },
         endTime: {
             type: DataTypes.TIME,
-            allowNULL: false
+            allowNull: false
         },
         color: {
             type: DataTypes.STRING(8),
-            allowNULL: false
+            allowNull: false
         },
         originId: {
             type: DataTypes.INTEGER,
-            allowNULL: true
+            allowNull: true
         }
         // userId: {
         //     type: DataTypes.STRING(30),

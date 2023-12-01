@@ -2,61 +2,66 @@ module.exports = (sequelize, DataTypes) => {
     const Recruit = sequelize.define('Recruit', {
         title: {
             type: DataTypes.STRING(30),
-            allowNULL: false
+            allowNull: false
         },
         content: {
             type: DataTypes.TEXT,
-            allowNULL: false
+            allowNull: false
         },
         peopleNum: {
             type: DataTypes.INTEGER,
-            allowNULL: false
+            allowNull: false
+        },
+        participateNum: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 1
         },
         regionFirst: { //region 저장하는 거에 따라 수정
             type: DataTypes.STRING(10),
-            allowNULL: false
+            allowNull: false
         },
         regionSecond: {
             type: DataTypes.STRING(10),
-            allowNULL: false
+            allowNull: false
         },
         startDate: {
             type: DataTypes.DATEONLY,
-            allowNULL: false
+            allowNull: false
         },
         endDate: {
             type: DataTypes.DATEONLY,
-            allowNULL: true
+            allowNull: true
         },
         timeCategory: {
             type: DataTypes.ENUM('D', 'TBD'),
-            allowNULL: false
+            allowNull: false
         },
         startTime: {
             type: DataTypes.TIME,
-            allowNULL: true
+            allowNull: true
         },
         endTime: {
             type: DataTypes.TIME,
-            allowNULL: true
+            allowNull: true
         },
         state: {
             type: DataTypes.ENUM('Recruiting', 'Closed', 'Completed'),
-            allowNULL: false,
+            allowNull: false,
             defaultValue: 'Recruiting'
         },
         color: {
             type: DataTypes.STRING(10),
-            allowNULL: false
+            allowNull: false
         },
         imagePath: {
             type: DataTypes.STRING,
-            allowNULL: true,
+            allowNull: true,
             defaultValue: 'uploads/recruits/default.jpg'
         },
         owner: {
             type: DataTypes.ENUM('User', 'Chanel'),
-            allowNULL: false
+            allowNull: false
         }
     }, {
         charset: 'utf8',
@@ -68,11 +73,11 @@ module.exports = (sequelize, DataTypes) => {
     Recruit.associate = models => {
         Recruit.belongsTo(models.User, {
             onDelete: 'CASCADE',
-            foreignKey:'WriterId'
+            foreignKey: 'WriterId'
         });
-        Recruit.belongsToMany(models.User,{
-            through:'RecruitUser',
-            as:'Users',
+        Recruit.belongsToMany(models.User, {
+            through: 'RecruitUser',
+            as: 'Users',
             timestamps: false
         });
     }

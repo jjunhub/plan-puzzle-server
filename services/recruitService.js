@@ -5,43 +5,12 @@ const moment = require('moment');
 const Recruit = db.Recruit;
 const User = db.User;
 const Schedule = db.Schedule;
+const recruitDto = require('../dto/recruitDto')
 
 //pageSize 상수
 const pageSize = 10;
 const createRecruit = async (userId, imagePath, recruitData) => {
-    const {
-        title,
-        content,
-        owner,
-        regionFirst,
-        regionSecond,
-        peopleNum,
-        startDate,
-        endDate,
-        timeCategory,
-        startTime,
-        endTime,
-        color
-    } = recruitData;
-
-    const recruit = await Recruit.create({
-        title: title,
-        content: content,
-        peopleNum: peopleNum,
-        regionFirst: regionFirst,
-        regionSecond: regionSecond,
-        startDate: startDate,
-        endDate: endDate || null,
-        timeCategory: timeCategory,
-        startTime: startTime || null,
-        endTime: endTime || null,
-        color: color,
-        owner: owner,
-        WriterId: userId,
-        ...(imagePath && {imagePath: imagePath})
-    });
-    const user = await User.findByPk(userId);
-    recruit.addUsers(user);
+    await recruitDto.toRecruit({userId, imagePath, ...recruitData});
 }
 
 const getInitialPageData = async () => {
@@ -50,8 +19,12 @@ const getInitialPageData = async () => {
         limit: pageSize,
         raw: true
     });
-    const minId = recruits[recruits.length - 1].id;
-    return {recruits: recruits, minId: minId};
+    const minId = recruits[recruits.length - 1]?.id || 0;
+    const recruitsDto = await Promise.all(recruits.map(async recruit => {
+        return await recruitDto.fromRecruit(recruit);
+    }));
+
+    return {recruits: recruitsDto, minId: minId};
 }
 
 const getPagedRecruits = async (nextId) => {
@@ -66,7 +39,11 @@ const getPagedRecruits = async (nextId) => {
         raw: true
     });
     const minId = nextId - pageSize < 0 ? 0 : nextId - pageSize;
-    return {recruits: recruits, minId: minId};
+    const recruitsDto = await Promise.all(recruits.map(async recruit => {
+        return await recruitDto.fromRecruit(recruit);
+    }));
+
+    return {recruits: recruitsDto, minId: minId};
 }
 
 const deleteRecruit = async (userId, recruitId) => {
@@ -107,12 +84,20 @@ const participateRecruit = async (userId, recruitId) => {
             }
         }
     });
+
     if (!recruit) {
         return;
         //에러처리
         //작성자가 참여하려고 했거나, recruit이 없음(삭제됨?)
     }
+
     await recruit.addUsers(user);
+
+    recruit.participateNum += 1;
+    if (recruit.participateNum === recruit.peopleNum) {
+        recruit.state = 'Closed';
+    }
+    recruit.save();
 }
 const getAvailableTime = async (recruitId, timeData) => {
     const {startDate, endDate, startTime, endTime, interval} = timeData;
@@ -154,23 +139,23 @@ const getAvailableTime = async (recruitId, timeData) => {
                         //스케줄 < time
                         {
                             startTime: {
-                                [Op.gte]:currentStartTime,
-                                [Op.lt]:currentEndTime
+                                [Op.gte]: currentStartTime,
+                                [Op.lt]: currentEndTime
                             }
                         },
                         {
                             endTime: {
-                                [Op.gt]:currentStartTime,
-                                [Op.lte]:currentEndTime
+                                [Op.gt]: currentStartTime,
+                                [Op.lte]: currentEndTime
                             }
                         },
                         //스케줄 > time
                         {
                             startTime: {
-                                [Op.lte]:currentStartTime
+                                [Op.lte]: currentStartTime
                             },
                             endTime: {
-                                [Op.gte]:currentEndTime
+                                [Op.gte]: currentEndTime
                             }
                         }
                     ]
