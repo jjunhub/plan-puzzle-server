@@ -28,7 +28,7 @@ const loginUser = async (req, res) => {
         id: user.id
     }
 
-    res.status(200).json("로그인 성공");
+    res.status(200).json(user);
 }
 const logoutUser = async (req, res) => {
     req.session.destroy();

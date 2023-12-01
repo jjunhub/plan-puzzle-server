@@ -3,13 +3,14 @@ const moment = require('moment');
 require('moment/locale/ko');
 const db = require('../models/index');
 const Schedule = db.Schedule;
+const scheduleDto = require('../dto/scheduleDto')
 const {ScheduleNotFoundError, InValidDateError} = require('../constants/errors');
 
 const loadHome = async (userId) => {
     let now = moment();
     const today = now.clone().format('YYYY-MM-DD')
 
-    const schedules = await showSchedules(userId, today);
+    const schedulesDto = await showSchedules(userId, today);
     const nextSchedules = await Schedule.findAll({
         where: {
             UserId: userId,
@@ -20,7 +21,10 @@ const loadHome = async (userId) => {
         }
     });
 
-    return {schedules: schedules, nextSchedules: nextSchedules};
+    const nextSchedulesDto = nextSchedules.map(schedule => scheduleDto.fromSchedule(schedule));
+
+    return {schedules: schedulesDto, nextSchedules: nextSchedulesDto};
+
     // subscirbNotices 추가해야함 나중에 모집글 + 채널 완성하면
 }
 
@@ -44,7 +48,6 @@ const validateCreateSchedule = async (userId, scheduleData) => {
     while (!momentStartDate.isAfter(momentEndDate)) {
         const date = momentStartDate.format('YYYY-MM-DD');
         const findSchedule = await Schedule.findOne({
-            attributes: ['title', 'date'],
             where: {
                 UserId: userId,
                 date: date,
@@ -77,7 +80,7 @@ const validateCreateSchedule = async (userId, scheduleData) => {
         }
         momentStartDate.add(repeatPeriod, 'days');
     }
-    return alreadyExistSchedules;
+    return alreadyExistSchedules.map(schedule => scheduleDto.fromSchedule(schedule));
 }
 
 
@@ -91,7 +94,7 @@ const createSchedule = async (userId, scheduleData) => {
 
     while (!momentStartDate.isAfter(momentEndDate)) {
         const date = momentStartDate.format('YYYY-MM-DD');
-        await Schedule.create({
+        await scheduleDto.toSchedule({
             UserId: userId,
             originId: maxOriginId,
             title: title,
@@ -119,7 +122,7 @@ const deleteSchedule = async (userId, scheduleId, option) => {
 }
 
 async function findSchedulesByDate(userId, startDate, endDate) {
-    return await Schedule.findAll({
+    const schedules = await Schedule.findAll({
         where: {
             UserId: userId,
             date: {
@@ -127,6 +130,11 @@ async function findSchedulesByDate(userId, startDate, endDate) {
             }
         }
     });
+    if (schedules === null) {
+        throw new Error(ScheduleNotFoundError.MESSAGE);
+    }
+
+    return schedules.map(schedule => scheduleDto.fromSchedule(schedule));
 }
 
 async function findScheduleById(userId, scheduleId) {
@@ -140,7 +148,8 @@ async function findScheduleById(userId, scheduleId) {
     if (schedule === null) {
         throw new Error(ScheduleNotFoundError.MESSAGE);
     }
-    return schedule;
+
+    return scheduleDto.fromSchedule(schedule);
 }
 
 async function deleteOne(userId, schedule) {

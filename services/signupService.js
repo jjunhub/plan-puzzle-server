@@ -1,16 +1,10 @@
 const db = require('../models/index');
 const User = db.User;
+const userDto = require('../dto/userDto');
 const {LoginError, DuplicateIdError, DuplicateNickNameError, SignUpError} = require('../constants/errors');
 
 const registerUser = async (userData) => {
-    const {id, password, name, nickname, email} = userData;
-    const newUser = await User.create({
-        userId: id,
-        userPw: password,
-        name: name,
-        nickname: nickname,
-        email: email
-    });
+    const newUser = await userDto.toUser(userData)
 
     if (newUser === null) {
         throw new Error(SignUpError.MESSAGE);
@@ -56,7 +50,7 @@ const loginUser = async (userData) => {
         throw new Error(LoginError.MESSAGE);
     }
 
-    return loginUser;
+    return userDto.fromUser(loginUser);
 }
 
 module.exports = {registerUser, isIdDuplicates, isNicknameDuplicates, loginUser};

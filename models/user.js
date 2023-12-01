@@ -2,25 +2,25 @@ module.exports = (sequelize, DataTypes) => {
     const User = sequelize.define('User', {
         userId: {
             type: DataTypes.STRING(30),
-            allowNULL: false,
+            allowNull: false,
             unique: true
         },
         userPw: {
             type: DataTypes.STRING(30),
-            allowNULL: false
+            allowNull: false
         },
         name: {
             type: DataTypes.STRING(30),
-            allowNULL: false,
+            allowNull: false,
         },
         nickname: {
             type: DataTypes.STRING(30),
-            allowNULL: false,
+            allowNull: false,
             unique: true
         },
         email: {
             type: DataTypes.STRING(30),
-            allowNULL: true,
+            allowNull: true,
             unique: true,
             validate: {
                 isEmail: true
@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         image: {
             type: DataTypes.STRING,
-            allowNULL: true,
+            allowNull: true,
             validate: {
                 isUrl: true
             }
