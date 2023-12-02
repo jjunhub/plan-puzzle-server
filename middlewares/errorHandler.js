@@ -19,6 +19,7 @@ const errorHandlerMap = {
 
 const errorHandler = (err, req, res, next) => {
     const error = errorHandlerMap[err.message];
+    console.log(err);
 
     if (error) {
         res.status(error.CODE).send(error.MESSAGE);
