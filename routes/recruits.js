@@ -21,12 +21,12 @@ const upload = multer({
 });
 
 router.post('/', upload.single('image'), wrapAsync(recruitController.createRecruit));
-router.get('/', recruitController.getRecruitData);
+router.get('/', wrapAsync(recruitController.getRecruitData));
 
-router.delete('/:recruitId',recruitController.deleteRecruit);
-router.put('/:recruitId',recruitController.updateRecruitState);
-router.post('/:recruitId',recruitController.participateRecruit);
+router.delete('/:recruitId', wrapAsync(recruitController.deleteRecruit));
+router.put('/:recruitId', wrapAsync(recruitController.updateRecruitState));
+router.post('/:recruitId', wrapAsync( recruitController.participateRecruit));
 
-router.post('/:recruitId/times',recruitController.getAvailableTime);
+router.post('/:recruitId/times',wrapAsync( recruitController.getAvailableTime));
 
 module.exports = router;
