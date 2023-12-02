@@ -50,11 +50,18 @@ const getAvailableTime = async (req, res) => {
     //timeSlots이 비었을 때, 즉 가능한 시간이 없을때는 빈 배열 반환
 }
 
+const searchRecruit = async (req, res) => {
+    const searchKeyword = req.query.keyword;
+    const recruits = await recruitService.searchRecruit(searchKeyword);
+    res.status(200).json(recruits);
+}
+
 module.exports = {
     createRecruit,
     getRecruitData,
     deleteRecruit,
     updateRecruitState,
     participateRecruit,
-    getAvailableTime
+    getAvailableTime,
+    searchRecruit
 };

@@ -171,6 +171,21 @@ const getAvailableTime = async (recruitId, timeData) => {
     return timeSlots;
 }
 
+const searchRecruit = async (searchKeyword) => {
+    const recruits = await Recruit.findAll({
+        where: {
+            title: {
+                [Op.like]: `%${searchKeyword}%`
+            }
+        },
+        raw: true
+    });
+    const recruitsDto = await Promise.all(recruits.map(async recruit => {
+        return await recruitDto.fromRecruit(recruit);
+    }));
+    return recruitsDto;
+}
+
 
 module.exports = {
     createRecruit,
@@ -179,5 +194,6 @@ module.exports = {
     deleteRecruit,
     updateRecruitState,
     participateRecruit,
-    getAvailableTime
+    getAvailableTime,
+    searchRecruit
 };

@@ -28,5 +28,6 @@ router.put('/:recruitId', wrapAsync(recruitController.updateRecruitState));
 router.post('/:recruitId', wrapAsync( recruitController.participateRecruit));
 
 router.post('/:recruitId/times',wrapAsync( recruitController.getAvailableTime));
+router.get('/search', wrapAsync(recruitController.searchRecruit));
 
 module.exports = router;
