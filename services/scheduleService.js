@@ -131,7 +131,7 @@ async function findSchedulesByDate(userId, startDate, endDate) {
         }
     });
     if (schedules === null) {
-        throw new Error(ScheduleNotFoundError.MESSAGE);
+        throw new Error(ScheduleNotFoundError.MESSAGE.message);
     }
 
     return schedules.map(schedule => scheduleDto.fromSchedule(schedule));
@@ -146,7 +146,7 @@ async function findScheduleById(userId, scheduleId) {
     });
 
     if (schedule === null) {
-        throw new Error(ScheduleNotFoundError.MESSAGE);
+        throw new Error(ScheduleNotFoundError.MESSAGE.message);
     }
 
     return scheduleDto.fromSchedule(schedule);
@@ -192,7 +192,7 @@ async function deleteAfterDay(userId, schedule) {
 async function validateDate(...dates) {
     for (const date of dates) {
         if (!moment(date).isValid()) {
-            throw new Error(InValidDateError.MESSAGE);
+            throw new Error(InValidDateError.MESSAGE.message);
         }
     }
 }

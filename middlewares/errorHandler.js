@@ -9,12 +9,12 @@ const {
 } = require('../constants/errors');
 
 const errorHandlerMap = {
-    [LoginError.MESSAGE]: LoginError,
-    [NotFoundError.MESSAGE]: NotFoundError,
-    [SignUpError.MESSAGE]: SignUpError,
-    [DuplicateNickNameError.MESSAGE]: DuplicateNickNameError,
-    [DuplicateIdError.MESSAGE]: DuplicateIdError,
-    [NotAuthorizedError.MESSAGE]: NotAuthorizedError
+    [LoginError.MESSAGE.message]: LoginError,
+    [NotFoundError.MESSAGE.message]: NotFoundError,
+    [SignUpError.MESSAGE.message]: SignUpError,
+    [DuplicateNickNameError.MESSAGE.message]: DuplicateNickNameError,
+    [DuplicateIdError.MESSAGE.message]: DuplicateIdError,
+    [NotAuthorizedError.MESSAGE.message]: NotAuthorizedError
 };
 
 const errorHandler = (err, req, res, next) => {

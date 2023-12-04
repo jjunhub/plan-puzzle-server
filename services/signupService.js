@@ -7,7 +7,7 @@ const registerUser = async (userData) => {
     const newUser = await userDto.toUser(userData)
 
     if (newUser === null) {
-        throw new Error(SignUpError.MESSAGE);
+        throw new Error(SignUpError.MESSAGE.message);
     }
 
     return {message: '회원가입이 완료되었습니다.', userId: newUser.userId};
@@ -19,7 +19,7 @@ const isIdDuplicates = async (id) => {
     });
 
     if (findUserId !== null) {
-        throw new Error(DuplicateIdError.MESSAGE);
+        throw new Error(DuplicateIdError.MESSAGE.message);
     }
 
     return {message: '사용 가능한 아이디입니다.'};
@@ -31,7 +31,7 @@ const isNicknameDuplicates = async (nickname) => {
     });
 
     if (findUserNickname !== null) {
-        throw new Error(DuplicateNickNameError.MESSAGE);
+        throw new Error(DuplicateNickNameError.MESSAGE.message);
     }
 
     return {message: '사용 가능한 닉네임입니다.'};
@@ -47,7 +47,7 @@ const loginUser = async (userData) => {
     });
 
     if (loginUser === null) {
-        throw new Error(LoginError.MESSAGE);
+        throw new Error(LoginError.MESSAGE.message);
     }
 
     return userDto.fromUser(loginUser);
