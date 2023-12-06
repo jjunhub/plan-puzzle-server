@@ -63,6 +63,12 @@ const showVote = async (req, res) => {
     res.status(200).json(response);
 }
 
+const searchRecruit = async (req, res) => {
+    const searchKeyword = req.query.keyword;
+    const recruits = await recruitService.searchRecruit(searchKeyword);
+    res.status(200).json(recruits);
+}
+
 module.exports = {
     createRecruit,
     getRecruitData,
@@ -71,5 +77,6 @@ module.exports = {
     participateRecruit,
     getAvailableTime,
     saveAvailableTime,
-    showVote
+    showVote,
+    searchRecruit
 };

@@ -195,6 +195,7 @@ const getAvailableTime = async (recruitId, timeData) => {
     return timeSlots;
 }
 
+
 const saveAvailableTime = async (recruitId, timeData) => {
     await timeDto.toTime(recruitId, timeData);
 }
@@ -203,6 +204,22 @@ const showVote = async (userId, recruitId) => {
     const timesDto = await timeDto.fromTime({userId: userId, recruitId: recruitId});
     return timesDto.map(time => ({...time, voteState: time.getVoteState(userId)}));
 }
+
+const searchRecruit = async (searchKeyword) => {
+    const recruits = await Recruit.findAll({
+        where: {
+            title: {
+                [Op.like]: `%${searchKeyword}%`
+            }
+        },
+        raw: true
+    });
+    const recruitsDto = await Promise.all(recruits.map(async recruit => {
+        return await recruitDto.fromRecruit(recruit);
+    }));
+    return recruitsDto;
+}
+
 
 module.exports = {
     createRecruit,
@@ -213,5 +230,6 @@ module.exports = {
     participateRecruit,
     getAvailableTime,
     saveAvailableTime,
-    showVote
+    showVote,
+    searchRecruit
 };
