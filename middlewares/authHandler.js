@@ -6,7 +6,7 @@ const {NotAuthorizedError} = require('../constants/errors');
 const checkAuth = async (req, res, next) => {
     const {user} = req.session;
     if (!user) {
-        throw new Error(NotAuthorizedError.MESSAGE);
+        throw new Error(NotAuthorizedError.MESSAGE.message);
     }
 
     const findUserId = await User.findOne({
@@ -15,7 +15,7 @@ const checkAuth = async (req, res, next) => {
     });
 
     if (findUserId === null) {
-        throw new Error(NotAuthorizedError.MESSAGE);
+        throw new Error(NotAuthorizedError.MESSAGE.message);
     }
     next();
 }

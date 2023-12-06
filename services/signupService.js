@@ -4,6 +4,10 @@ const userDto = require('../dto/userDto');
 const {LoginError, DuplicateIdError, DuplicateNickNameError, SignUpError} = require('../constants/errors');
 
 const registerUser = async (userData) => {
+    const {id, nickname} = userData;
+    await isIdDuplicates(id);
+    await isNicknameDuplicates(nickname);
+
     const newUser = await userDto.toUser(userData)
 
     if (newUser === null) {

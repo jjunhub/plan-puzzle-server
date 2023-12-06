@@ -14,8 +14,8 @@ const createSchedule = async (req, res) => {
         res.status(200).json(alreadyExistSchedule);
         return;
     }
-    await scheduleService.createSchedule(userId, scheduleData);
-    res.status(201).send("일정이 성공적으로 추가되었습니다.");
+    const response = await scheduleService.createSchedule(userId, scheduleData);
+    res.status(201).send(response);
 };
 
 const showSchedules = async (req, res) => {
@@ -29,8 +29,9 @@ const deleteSchedule = async (req, res) => {
     const userId = req.session.user.id;
     const scheduleId = req.params.scheduleId;
     const option = req.body;
-    await scheduleService.deleteSchedule(userId, scheduleId, option);
-    res.status(200).send("일정이 성공적으로 삭제되었습니다.");
+    console.log(userId, scheduleId, option);
+    const response = await scheduleService.deleteSchedule(userId, scheduleId, option);
+    res.status(200).send(response);
 }
 
 module.exports = {loadHome, createSchedule, showSchedules, deleteSchedule};

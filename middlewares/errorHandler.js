@@ -5,7 +5,9 @@ const {
     SignUpError,
     DuplicateNickNameError,
     DuplicateIdError,
-    NotAuthorizedError
+    NotAuthorizedError,
+    InValidDateError,
+    ScheduleNotFoundError
 } = require('../constants/errors');
 
 const errorHandlerMap = {
@@ -14,7 +16,8 @@ const errorHandlerMap = {
     [SignUpError.MESSAGE.message]: SignUpError,
     [DuplicateNickNameError.MESSAGE.message]: DuplicateNickNameError,
     [DuplicateIdError.MESSAGE.message]: DuplicateIdError,
-    [NotAuthorizedError.MESSAGE.message]: NotAuthorizedError
+    [NotAuthorizedError.MESSAGE.message]: NotAuthorizedError,
+    [InValidDateError.MESSAGE.message]: InValidDateError
 };
 
 const errorHandler = (err, req, res, next) => {
