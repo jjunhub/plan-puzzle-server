@@ -49,6 +49,19 @@ const getAvailableTime = async (req, res) => {
     res.status(200).json(timeSlots);
     //timeSlots이 비었을 때, 즉 가능한 시간이 없을때는 빈 배열 반환
 }
+const saveAvailableTime = async (req, res) => {
+    const recruitId = req.params.recruitId;
+    const timeData = req.body;
+    await recruitService.saveAvailableTime(recruitId, timeData);
+    res.status(200).send();
+    //save 안되었을 때 에러처리
+}
+const showVote = async (req, res) => {
+    const recruitId = req.params.recruitId;
+    const userId = req.session.user.id;
+    const response = await recruitService.showVote(userId, recruitId);
+    res.status(200).json(response);
+}
 
 const searchRecruit = async (req, res) => {
     const searchKeyword = req.query.keyword;
@@ -63,5 +76,7 @@ module.exports = {
     updateRecruitState,
     participateRecruit,
     getAvailableTime,
+    saveAvailableTime,
+    showVote,
     searchRecruit
 };

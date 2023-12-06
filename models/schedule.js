@@ -56,5 +56,17 @@ module.exports = (sequelize, DataTypes) => {
         return 0;
     };
 
+    Schedule.prototype.getId = function () {
+        return this.id;
+    }
+
+    Schedule.prototype.getOriginId = function () {
+        return this.originId;
+    }
+
+    Schedule.prototype.getDate = function () {
+        return this.date;
+    }
+
     return Schedule;
 };
