@@ -28,5 +28,6 @@ router.put('/:recruitId',recruitController.updateRecruitState);
 router.post('/:recruitId',recruitController.participateRecruit);
 
 router.post('/:recruitId/times',recruitController.getAvailableTime);
+router.post('/:recruitId/times/save',recruitController.saveAvailableTime);
 
 module.exports = router;
