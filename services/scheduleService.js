@@ -40,6 +40,7 @@ const showSchedules = async (userId, date) => {
 
 const validateCreateSchedule = async (userId, scheduleData) => {
     const {startDate, endDate, startTime, endTime, repeatPeriod, title} = scheduleData;
+    await validateDate(startDate, endDate);
 
     const momentStartDate = moment(startDate, 'YYYY-MM-DD');
     const momentEndDate = moment(endDate, 'YYYY-MM-DD');
@@ -153,7 +154,7 @@ async function findScheduleById(userId, scheduleId) {
         throw new Error(ScheduleNotFoundError.MESSAGE.message);
     }
 
-    return scheduleDto.fromSchedule(schedule);
+    return schedule;
 }
 
 async function deleteOne(userId, schedule) {
