@@ -39,8 +39,7 @@ const showSchedules = async (userId, date) => {
 }
 
 const validateCreateSchedule = async (userId, scheduleData) => {
-    const {startDate, endDate, startTime, endTime, repeatPeriod, title} = scheduleData;
-    await validateDate(startDate, endDate);
+    const {startDate, endDate, startTime, endTime, repeatPeriod} = scheduleData;
 
     const momentStartDate = moment(startDate, 'YYYY-MM-DD');
     const momentEndDate = moment(endDate, 'YYYY-MM-DD');
@@ -158,7 +157,7 @@ async function findScheduleById(userId, scheduleId) {
 }
 
 async function deleteOne(userId, schedule) {
-    const id = schedule.id;
+    const id = schedule.getId();
 
     await Schedule.destroy({
         where: {
@@ -169,7 +168,7 @@ async function deleteOne(userId, schedule) {
 }
 
 async function deleteAll(userId, schedule) {
-    const originId = schedule.originId;
+    const originId = schedule.getOriginId();
 
     await Schedule.destroy({
         where: {
@@ -180,8 +179,8 @@ async function deleteAll(userId, schedule) {
 }
 
 async function deleteAfterDay(userId, schedule) {
-    const originId = schedule.originId;
-    const date = schedule.date;
+    const originId = schedule.getOriginId();
+    const date = schedule.getDate();
 
     await Schedule.destroy({
         where: {

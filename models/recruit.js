@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         endDate: {
             type: DataTypes.DATEONLY,
-            allowNull: true
+            allowNull: false
         },
         timeCategory: {
             type: DataTypes.ENUM('D', 'TBD'),
@@ -50,10 +50,6 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: 'Recruiting'
         },
-        color: {
-            type: DataTypes.STRING(10),
-            allowNull: false
-        },
         imagePath: {
             type: DataTypes.STRING,
             allowNull: true,
@@ -71,6 +67,7 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     Recruit.associate = models => {
+        Recruit.hasMany(models.Time);
         Recruit.belongsTo(models.User, {
             onDelete: 'CASCADE',
             foreignKey: 'WriterId'
@@ -81,5 +78,13 @@ module.exports = (sequelize, DataTypes) => {
             timestamps: false
         });
     }
+
+    Recruit.prototype.increaseParticipateNum = function(){
+        this.participateNum += 1;
+        if (this.participateNum === this.peopleNum) {
+            this.state = 'Closed';
+        }
+    }
+
     return Recruit;
 };

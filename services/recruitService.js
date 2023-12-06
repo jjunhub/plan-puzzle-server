@@ -5,11 +5,20 @@ const moment = require('moment');
 const Recruit = db.Recruit;
 const User = db.User;
 const Schedule = db.Schedule;
+const Time = db.Time;
 const recruitDto = require('../dto/recruitDto')
+const timeDto = require('../dto/timeDto');
 
 //pageSize 상수
 const pageSize = 10;
 const createRecruit = async (userId, imagePath, recruitData) => {
+    const {startTime, endTime, timeCategory} = recruitData;
+    if (timeCategory === 'TBD' && (startTime || endTime)) {
+        //TBD인데 startTime, endTime중 하나라도 null이 아닐 때
+    }
+    if (timeCategory === 'D' && (!startTime || !endTime)) {
+        //D인데 startTime, endTime중 하나라도 null일 때
+    }
     await recruitDto.toRecruit({userId, imagePath, ...recruitData});
 }
 
@@ -82,7 +91,13 @@ const participateRecruit = async (userId, recruitId) => {
             WriterId: {
                 [Op.ne]: userId
             }
-        }
+        },
+        include: [{
+            model: User,
+            as: 'Users',
+            through: 'RecruitUser',
+            attributes: ['id']
+        }]
     });
 
     if (!recruit) {
@@ -91,12 +106,17 @@ const participateRecruit = async (userId, recruitId) => {
         //작성자가 참여하려고 했거나, recruit이 없음(삭제됨?)
     }
 
+    recruit.Users.map(recruitUser => {
+        if (recruitUser.getId() === user.getId()) {
+            console.log('에러처리 해야함');
+            return;
+            //에러처리
+        }
+    });
+
     await recruit.addUsers(user);
 
-    recruit.participateNum += 1;
-    if (recruit.participateNum === recruit.peopleNum) {
-        recruit.state = 'Closed';
-    }
+    recruit.increaseParticipateNum();
     recruit.save();
 }
 const getAvailableTime = async (recruitId, timeData) => {
@@ -112,13 +132,17 @@ const getAvailableTime = async (recruitId, timeData) => {
             attributes: ['id']
         }],
     });
-
     const userIds = recruitUsers.Users.map(user => user.id);
 
     const momentStartDate = moment(startDate, 'YYYY-MM-DD');
     const momentEndDate = moment(endDate, 'YYYY-MM-DD');
 
     const timeSlots = [];
+
+    if(momentStartDate.clone().add(7, 'days').isAfter(momentEndDate)){
+        //에러처리
+        //일주일 이상 하려함
+    }
 
     while (!momentStartDate.isAfter(momentEndDate)) {
         const date = momentStartDate.format('YYYY-MM-DD');
@@ -171,6 +195,16 @@ const getAvailableTime = async (recruitId, timeData) => {
     return timeSlots;
 }
 
+
+const saveAvailableTime = async (recruitId, timeData) => {
+    await timeDto.toTime(recruitId, timeData);
+}
+
+const showVote = async (userId, recruitId) => {
+    const timesDto = await timeDto.fromTime({userId: userId, recruitId: recruitId});
+    return timesDto.map(time => ({...time, voteState: time.getVoteState(userId)}));
+}
+
 const searchRecruit = async (searchKeyword) => {
     const recruits = await Recruit.findAll({
         where: {
@@ -195,5 +229,7 @@ module.exports = {
     updateRecruitState,
     participateRecruit,
     getAvailableTime,
+    saveAvailableTime,
+    showVote,
     searchRecruit
 };
