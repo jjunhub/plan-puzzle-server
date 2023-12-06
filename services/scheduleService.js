@@ -106,6 +106,8 @@ const createSchedule = async (userId, scheduleData) => {
         });
         momentStartDate.add(repeatPeriod, 'days');
     }
+
+    return {message: '일정이 성공적으로 등록되었습니다.'};
 }
 
 const deleteSchedule = async (userId, scheduleId, option) => {
@@ -119,6 +121,8 @@ const deleteSchedule = async (userId, scheduleId, option) => {
     } else {
         await deleteOne(userId, schedule);
     }
+
+    return {message: '일정이 성공적으로 삭제되었습니다.'};
 }
 
 async function findSchedulesByDate(userId, startDate, endDate) {
