@@ -210,7 +210,7 @@ const showVote = async (userId, recruitId) => {
         }
     });
     return await Promise.all(times.map(async time => {
-        return await timeDto.fromTime(time,userId);
+        return await timeDto.fromTime(time, userId);
     }));
 }
 
@@ -220,13 +220,19 @@ const doVote = async (userId, recruitId, idList) => {
             id: {
                 [Op.in]: idList
             },
-            RecruitId:recruitId
+            RecruitId: recruitId
         }
     });
     const user = await User.findByPk(userId);
     times.map(time => {
         time.addUsers(user);
     });
+}
+
+const endVote = async (recruitId) => {
+    const recruit = Recruit.findByPk(recruitId);
+    recruit.changeVoteEnd();
+    recruit.save();
 }
 const searchRecruit = async (searchKeyword) => {
     const recruits = await Recruit.findAll({
