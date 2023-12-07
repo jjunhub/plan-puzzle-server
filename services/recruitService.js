@@ -139,7 +139,7 @@ const getAvailableTime = async (recruitId, timeData) => {
 
     const timeSlots = [];
 
-    if(momentStartDate.clone().add(7, 'days').isAfter(momentEndDate)){
+    if (momentStartDate.clone().add(7, 'days').isAfter(momentEndDate)) {
         //에러처리
         //일주일 이상 하려함
     }
@@ -205,21 +205,119 @@ const showVote = async (userId, recruitId) => {
     return timesDto.map(time => ({...time, voteState: time.getVoteState(userId)}));
 }
 
-const searchRecruit = async (searchKeyword) => {
+const searchInitialPageData = async (queryParameter) => {
+    const {title, content, writer, sort} = queryParameter;
+    let whereConditions = [];
+
+    if (title !== undefined) {
+        whereConditions.push({title: {[Op.like]: `%${title}%`}});
+    }
+    if (content !== undefined) {
+        whereConditions.push({content: {[Op.like]: `%${content}%`}});
+    }
+    if (writer !== undefined) {
+        const writerUser = await User.findOne({
+            where: {nickname: writer}
+        });
+        if (writerUser) {
+            whereConditions.push({WriterId: writerUser.id});
+        }
+    }
+
+    let finalWhereCondition = {};
+    if (whereConditions.length > 0) {
+        finalWhereCondition = {[Op.or]: whereConditions};
+    }
+
+    let order = [];
+    if (sort === 'oldest') {
+        order.push(['createdAt', 'ASC']);
+    } else {
+        order.push(['createdAt', 'DESC']);
+    }
+
     const recruits = await Recruit.findAll({
-        where: {
-            title: {
-                [Op.like]: `%${searchKeyword}%`
-            }
-        },
-        raw: true
+        where: finalWhereCondition,
+        order: order,
+        include: writer !== undefined ? [User] : [],
+        raw: true,
+        limit: pageSize
     });
-    const recruitsDto = await Promise.all(recruits.map(async recruit => {
-        return await recruitDto.fromRecruit(recruit);
-    }));
-    return recruitsDto;
+
+    const minId = recruits[recruits.length - 1]?.id || 0;
+
+
+    const recruitsDto = await Promise.all(recruits.map(recruit => recruitDto.fromRecruit(recruit)));
+
+    return {recruits: recruitsDto, minId: minId};
 }
 
+const searchPagedRecruits = async (queryParameter, nextId) => {
+    const {title, content, writer, sort} = queryParameter;
+    let whereConditions = [];
+
+    if (title !== undefined) {
+        whereConditions.push({title: {[Op.like]: `%${title}%`}});
+    }
+    if (content !== undefined) {
+        whereConditions.push({content: {[Op.like]: `%${content}%`}});
+    }
+    if (writer !== undefined) {
+        const writerUser = await User.findOne({
+            where: {nickname: writer}
+        });
+        if (writerUser) {
+            whereConditions.push({WriterId: writerUser.id});
+        }
+    }
+
+    let finalWhereCondition = {};
+    if (whereConditions.length > 0) {
+        finalWhereCondition = {[Op.or]: whereConditions};
+    }
+
+    let order = [];
+    let recruits, minId;
+    if (sort === 'oldest') {
+        order.push(['createdAt', 'ASC']);
+        recruits = await Recruit.findAll({
+            where: {
+                id: {
+                    [Op.gt]: nextId
+                },
+                ...finalWhereCondition
+            },
+            order: order,
+            include: writer !== undefined ? [User] : [],
+            raw: true,
+            limit: pageSize
+        });
+
+        if (recruits.length < pageSize) minId = 0;
+        else minId = nextId + recruits.length;
+
+    } else {
+        order.push(['createdAt', 'DESC']);
+        recruits = await Recruit.findAll({
+            where: {
+                id: {
+                    [Op.lt]: nextId
+                },
+                ...finalWhereCondition
+            },
+            order: order,
+            include: writer !== undefined ? [User] : [],
+            raw: true,
+            limit: pageSize
+        });
+
+        minId = nextId - pageSize < 0 ? 0 : nextId - pageSize;
+    }
+
+    const recruitsDto = await Promise.all(recruits.map(recruit => recruitDto.fromRecruit(recruit)));
+
+    return {recruits: recruitsDto, minId: minId};
+}
 
 module.exports = {
     createRecruit,
@@ -231,5 +329,6 @@ module.exports = {
     getAvailableTime,
     saveAvailableTime,
     showVote,
-    searchRecruit
+    searchInitialPageData,
+    searchPagedRecruits
 };

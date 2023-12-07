@@ -64,9 +64,15 @@ const showVote = async (req, res) => {
 }
 
 const searchRecruit = async (req, res) => {
-    const searchKeyword = req.query.keyword;
-    const recruits = await recruitService.searchRecruit(searchKeyword);
-    res.status(200).json(recruits);
+    const queryParameter = req.query;
+    let response;
+
+    const nextId = parseInt(queryParameter.minId);
+    if (nextId) response = await recruitService.searchPagedRecruits(queryParameter, nextId);
+    else response = await recruitService.searchInitialPageData(queryParameter);
+
+
+    res.status(200).json(response);
 }
 
 module.exports = {
