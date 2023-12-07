@@ -26,7 +26,6 @@ const getInitialPageData = async () => {
     const recruits = await Recruit.findAll({
         order: [['id', 'DESC']],
         limit: pageSize,
-        raw: true
     });
     const minId = recruits[recruits.length - 1]?.id || 0;
     const recruitsDto = await Promise.all(recruits.map(async recruit => {
@@ -45,7 +44,6 @@ const getPagedRecruits = async (nextId) => {
         },
         order: [['id', 'DESC']],
         limit: pageSize,
-        raw: true
     });
     const minId = nextId - pageSize < 0 ? 0 : nextId - pageSize;
     const recruitsDto = await Promise.all(recruits.map(async recruit => {
@@ -230,7 +228,10 @@ const doVote = async (userId, recruitId, idList) => {
 }
 
 const endVote = async (recruitId) => {
-    const recruit = Recruit.findByPk(recruitId);
+    const recruit = await Recruit.findByPk(recruitId);
+    if(!recruit){
+        //모집글이 없다면...
+    }
     recruit.changeVoteEnd();
     recruit.save();
 }
@@ -261,5 +262,6 @@ module.exports = {
     saveAvailableTime,
     showVote,
     doVote,
+    endVote,
     searchRecruit
 };

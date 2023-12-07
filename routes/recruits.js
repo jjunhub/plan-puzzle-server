@@ -30,7 +30,8 @@ router.post('/:recruitId', wrapAsync(recruitController.participateRecruit));
 router.post('/:recruitId/times', wrapAsync(recruitController.getAvailableTime));
 router.post('/:recruitId/times/save', wrapAsync(recruitController.saveAvailableTime));
 router.get('/:recruitId/times/vote', wrapAsync(recruitController.showVote));
-router.post('/:recruitId/times/vote',wrapAsync(recruitController.doVote))
+router.post('/:recruitId/times/vote',wrapAsync(recruitController.doVote));
+router.put('/:recruitId/times/vote',wrapAsync(recruitController.endVote));
 
 router.get('/search', wrapAsync(recruitController.searchRecruit));
 
