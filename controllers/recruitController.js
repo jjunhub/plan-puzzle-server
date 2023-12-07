@@ -63,6 +63,14 @@ const showVote = async (req, res) => {
     res.status(200).json(response);
 }
 
+const doVote = async (req, res) => {
+    const recruitId = req.params.recruitId;
+    const userId = req.session.user.id;
+    const idList = req.body.idList;
+    const response = await recruitService.doVote(userId, recruitId, idList);
+    res.status(200).json(response);
+}
+
 const searchRecruit = async (req, res) => {
     const searchKeyword = req.query.keyword;
     const recruits = await recruitService.searchRecruit(searchKeyword);
@@ -78,5 +86,6 @@ module.exports = {
     getAvailableTime,
     saveAvailableTime,
     showVote,
+    doVote,
     searchRecruit
 };

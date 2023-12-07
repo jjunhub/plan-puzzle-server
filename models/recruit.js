@@ -58,6 +58,11 @@ module.exports = (sequelize, DataTypes) => {
         owner: {
             type: DataTypes.ENUM('User', 'Chanel'),
             allowNull: false
+        },
+        vote:{
+            type:DataTypes.ENUM('Before','During','End'),
+            allowNull:false,
+            defaultValue:'Before'
         }
     }, {
         charset: 'utf8',
@@ -84,6 +89,14 @@ module.exports = (sequelize, DataTypes) => {
         if (this.participateNum === this.peopleNum) {
             this.state = 'Closed';
         }
+    }
+
+    Recruit.prototype.changeVoteStart = function(){
+        this.vote = 'During'
+    }
+
+    Recruit.prototype.changeVoteEnd = function(){
+        this.vote = 'End'
     }
 
     return Recruit;
