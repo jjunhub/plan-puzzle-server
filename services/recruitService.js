@@ -139,7 +139,7 @@ const getAvailableTime = async (recruitId, timeData) => {
 
     const timeSlots = [];
 
-    if(momentStartDate.clone().add(7, 'days').isAfter(momentEndDate)){
+    if (momentStartDate.clone().add(7, 'days').isAfter(momentEndDate)) {
         //에러처리
         //일주일 이상 하려함
     }
@@ -198,13 +198,36 @@ const getAvailableTime = async (recruitId, timeData) => {
 
 const saveAvailableTime = async (recruitId, timeData) => {
     await timeDto.toTime(recruitId, timeData);
+    const recruit = await Recruit.findByPk(recruitId);
+    recruit.changeVoteStart();
+    recruit.save();
 }
 
 const showVote = async (userId, recruitId) => {
-    const timesDto = await timeDto.fromTime({userId: userId, recruitId: recruitId});
-    return timesDto.map(time => ({...time, voteState: time.getVoteState(userId)}));
+    const times = await Time.findAll({
+        where: {
+            RecruitId: recruitId
+        }
+    });
+    return await Promise.all(times.map(async time => {
+        return await timeDto.fromTime(time,userId);
+    }));
 }
 
+const doVote = async (userId, recruitId, idList) => {
+    const times = await Time.findAll({
+        where: {
+            id: {
+                [Op.in]: idList
+            },
+            RecruitId:recruitId
+        }
+    });
+    const user = await User.findByPk(userId);
+    times.map(time => {
+        time.addUsers(user);
+    });
+}
 const searchRecruit = async (searchKeyword) => {
     const recruits = await Recruit.findAll({
         where: {
@@ -231,5 +254,6 @@ module.exports = {
     getAvailableTime,
     saveAvailableTime,
     showVote,
+    doVote,
     searchRecruit
 };

@@ -7,7 +7,7 @@ const wrapAsync = require("../middlewares/wrapAsync");
 const router = express.Router();
 
 const upload = multer({
-    storage : multer.diskStorage({
+    storage: multer.diskStorage({
         destination: function (req, file, cb) {
             cb(null, 'uploads/recruits');
         },
@@ -25,12 +25,13 @@ router.get('/', wrapAsync(recruitController.getRecruitData));
 
 router.delete('/:recruitId', wrapAsync(recruitController.deleteRecruit));
 router.put('/:recruitId', wrapAsync(recruitController.updateRecruitState));
-router.post('/:recruitId', wrapAsync( recruitController.participateRecruit));
+router.post('/:recruitId', wrapAsync(recruitController.participateRecruit));
 
-router.post('/:recruitId/times',wrapAsync(recruitController.getAvailableTime));
-router.post('/:recruitId/times/save',wrapAsync(recruitController.saveAvailableTime));
+router.post('/:recruitId/times', wrapAsync(recruitController.getAvailableTime));
+router.post('/:recruitId/times/save', wrapAsync(recruitController.saveAvailableTime));
+router.get('/:recruitId/times/vote', wrapAsync(recruitController.showVote));
+router.post('/:recruitId/times/vote',wrapAsync(recruitController.doVote))
 
-router.post('/:recruitId/times',wrapAsync( recruitController.getAvailableTime));
 router.get('/search', wrapAsync(recruitController.searchRecruit));
 
 module.exports = router;

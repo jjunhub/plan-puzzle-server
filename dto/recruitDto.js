@@ -43,7 +43,7 @@ exports.toRecruit = async (recruitData) => {
 
 exports.fromRecruit = async (recruit) => {
     const {
-        id:id,
+        id,
         title,
         content,
         peopleNum,
@@ -59,6 +59,7 @@ exports.fromRecruit = async (recruit) => {
         state,
         imagePath,
         owner,
+        vote,
         WriterId
     } = recruit;
 
@@ -86,6 +87,7 @@ exports.fromRecruit = async (recruit) => {
         endTime: endTime,
         state: state,
         color: color,
+        vote:vote,
         Writer: nickname,
         imagePath: imagePath
     }

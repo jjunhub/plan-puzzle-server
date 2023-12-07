@@ -11,11 +11,6 @@ module.exports = (sequelize, DataTypes) => {
         endTime: {
             type: DataTypes.TIME,
             allowNull: false
-        },
-        num: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            defaultValue: 0
         }
     }, {
         charset: 'utf8',
@@ -35,13 +30,18 @@ module.exports = (sequelize, DataTypes) => {
         })
     }
 
-    Time.prototype.getVoteState = function (userId) {
-        this.Users.map(user => {
-            if(user.getId() === userId){
-                return true;
+    Time.prototype.getVote = async function (userId) {
+        let state = false;
+        const users = await this.getUsers();
+        users?.map(user => {
+            if (user.getId() === userId) {
+                state=true
             }
         });
-        return false;
+        return{
+            num:users.length || 0,
+            state:state
+        }
     }
 
     return Time;
