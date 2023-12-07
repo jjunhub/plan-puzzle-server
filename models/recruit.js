@@ -59,10 +59,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.ENUM('User', 'Chanel'),
             allowNull: false
         },
-        vote:{
-            type:DataTypes.ENUM('Before','During','End'),
-            allowNull:false,
-            defaultValue:'Before'
+        vote: {
+            type: DataTypes.ENUM('Before', 'During', 'End'),
+            allowNull: false,
+            defaultValue: 'Before'
         }
     }, {
         charset: 'utf8',
@@ -84,19 +84,24 @@ module.exports = (sequelize, DataTypes) => {
         });
     }
 
-    Recruit.prototype.increaseParticipateNum = function(){
+    Recruit.prototype.increaseParticipateNum = function () {
         this.participateNum += 1;
         if (this.participateNum === this.peopleNum) {
             this.state = 'Closed';
         }
     }
 
-    Recruit.prototype.changeVoteStart = function(){
+    Recruit.prototype.changeVoteStart = function () {
         this.vote = 'During';
     }
 
-    Recruit.prototype.changeVoteEnd = function(){
+    Recruit.prototype.changeVoteEnd = function () {
         this.vote = 'End';
+    }
+
+    Recruit.prototype.getParticipantsId = async function () {
+        const users = await this.getUsers();
+        return users?.map(user => user.getId());
     }
 
     return Recruit;

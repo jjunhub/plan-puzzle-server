@@ -63,14 +63,14 @@ exports.fromRecruit = async (recruit) => {
         WriterId
     } = recruit;
 
-    let nickname;
-
+    let writer
     if (owner === 'User') {
-        const user = await User.findByPk(WriterId);
-        nickname = user.nickname;
+        writer = await User.findByPk(WriterId);
     } else {
         //owner가 채널일 경우, 채널의 닉네임 추가해줘야 함
     }
+
+    const participantsId = await recruit.getParticipantsId();
 
     return {
         id:id,
@@ -88,7 +88,11 @@ exports.fromRecruit = async (recruit) => {
         state: state,
         color: color,
         vote:vote,
-        Writer: nickname,
+        Writer: {
+            id:writer.id,
+            nickname:writer.nickname
+        },
+        participants:participantsId || null,
         imagePath: imagePath
     }
 }

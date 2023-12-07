@@ -26,7 +26,6 @@ const getInitialPageData = async () => {
     const recruits = await Recruit.findAll({
         order: [['id', 'DESC']],
         limit: pageSize,
-        raw: true
     });
     const minId = recruits[recruits.length - 1]?.id || 0;
     const recruitsDto = await Promise.all(recruits.map(async recruit => {
@@ -45,7 +44,6 @@ const getPagedRecruits = async (nextId) => {
         },
         order: [['id', 'DESC']],
         limit: pageSize,
-        raw: true
     });
     const minId = nextId - pageSize < 0 ? 0 : nextId - pageSize;
     const recruitsDto = await Promise.all(recruits.map(async recruit => {
