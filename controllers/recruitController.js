@@ -71,6 +71,11 @@ const doVote = async (req, res) => {
     res.status(200).json(response);
 }
 
+const endVote = async(req,res)=>{
+    const recruitId = req.params.recruitId;
+    await recruitService.endVote(recruitId);
+    res.status(200).send();
+}
 const searchRecruit = async (req, res) => {
     const searchKeyword = req.query.keyword;
     const recruits = await recruitService.searchRecruit(searchKeyword);
@@ -87,5 +92,6 @@ module.exports = {
     saveAvailableTime,
     showVote,
     doVote,
+    endVote,
     searchRecruit
 };

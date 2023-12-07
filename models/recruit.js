@@ -92,11 +92,11 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     Recruit.prototype.changeVoteStart = function(){
-        this.vote = 'During'
+        this.vote = 'During';
     }
 
     Recruit.prototype.changeVoteEnd = function(){
-        this.vote = 'End'
+        this.vote = 'End';
     }
 
     return Recruit;

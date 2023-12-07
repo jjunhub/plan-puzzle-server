@@ -230,7 +230,10 @@ const doVote = async (userId, recruitId, idList) => {
 }
 
 const endVote = async (recruitId) => {
-    const recruit = Recruit.findByPk(recruitId);
+    const recruit = await Recruit.findByPk(recruitId);
+    if(!recruit){
+        //모집글이 없다면...
+    }
     recruit.changeVoteEnd();
     recruit.save();
 }
@@ -261,5 +264,6 @@ module.exports = {
     saveAvailableTime,
     showVote,
     doVote,
+    endVote,
     searchRecruit
 };
