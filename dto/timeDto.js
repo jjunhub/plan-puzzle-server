@@ -7,11 +7,16 @@ exports.toTime = async (recruitId, timeData) => {
     Time.bulkCreate(times);
 }
 
-exports.fromTime = async (data) => {
-    return times = Time.findAll({
-        attributes: ['date', 'startTime', 'endTime', 'num'],
-        where: {
-            RecruitId: data.recruitId
-        }
-    });
+exports.fromTime = async (time, userId) => {
+    const {id,date, startTime, endTime} = time;
+    const vote = await time.getVote(userId);
+
+    return {
+        id:id,
+        date: date,
+        startTime: startTime,
+        endTime: endTime,
+        num: vote.num,
+        voteState: vote.state
+    }
 }

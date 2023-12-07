@@ -26,7 +26,6 @@ const getInitialPageData = async () => {
     const recruits = await Recruit.findAll({
         order: [['id', 'DESC']],
         limit: pageSize,
-        raw: true
     });
     const minId = recruits[recruits.length - 1]?.id || 0;
     const recruitsDto = await Promise.all(recruits.map(async recruit => {
@@ -45,7 +44,6 @@ const getPagedRecruits = async (nextId) => {
         },
         order: [['id', 'DESC']],
         limit: pageSize,
-        raw: true
     });
     const minId = nextId - pageSize < 0 ? 0 : nextId - pageSize;
     const recruitsDto = await Promise.all(recruits.map(async recruit => {
@@ -198,11 +196,44 @@ const getAvailableTime = async (recruitId, timeData) => {
 
 const saveAvailableTime = async (recruitId, timeData) => {
     await timeDto.toTime(recruitId, timeData);
+    const recruit = await Recruit.findByPk(recruitId);
+    recruit.changeVoteStart();
+    recruit.save();
 }
 
 const showVote = async (userId, recruitId) => {
-    const timesDto = await timeDto.fromTime({userId: userId, recruitId: recruitId});
-    return timesDto.map(time => ({...time, voteState: time.getVoteState(userId)}));
+    const times = await Time.findAll({
+        where: {
+            RecruitId: recruitId
+        }
+    });
+    return await Promise.all(times.map(async time => {
+        return await timeDto.fromTime(time, userId);
+    }));
+}
+
+const doVote = async (userId, recruitId, idList) => {
+    const times = await Time.findAll({
+        where: {
+            id: {
+                [Op.in]: idList
+            },
+            RecruitId: recruitId
+        }
+    });
+    const user = await User.findByPk(userId);
+    times.map(time => {
+        time.addUsers(user);
+    });
+}
+
+const endVote = async (recruitId) => {
+    const recruit = await Recruit.findByPk(recruitId);
+    if(!recruit){
+        //모집글이 없다면...
+    }
+    recruit.changeVoteEnd();
+    recruit.save();
 }
 
 const searchInitialPageData = async (queryParameter) => {
@@ -330,5 +361,8 @@ module.exports = {
     saveAvailableTime,
     showVote,
     searchInitialPageData,
-    searchPagedRecruits
+    searchPagedRecruits,
+    doVote,
+    endVote,
+    searchRecruit
 };
