@@ -72,7 +72,9 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     Recruit.associate = models => {
-        Recruit.hasMany(models.Time);
+        Recruit.hasMany(models.Time, {
+            onDelete: 'CASCADE'
+        });
         Recruit.belongsTo(models.User, {
             onDelete: 'CASCADE',
             foreignKey: 'WriterId'
@@ -80,7 +82,11 @@ module.exports = (sequelize, DataTypes) => {
         Recruit.belongsToMany(models.User, {
             through: 'RecruitUser',
             as: 'Users',
-            timestamps: false
+            timestamps: false,
+            onDelete:'CASCADE'
+        });
+        Recruit.hasMany(models.Comment,{
+            onDelete: 'CASCADE'
         });
     }
 

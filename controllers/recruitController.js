@@ -71,7 +71,7 @@ const doVote = async (req, res) => {
     res.status(200).json(response);
 }
 
-const endVote = async(req,res)=>{
+const endVote = async (req, res) => {
     const recruitId = req.params.recruitId;
     await recruitService.endVote(recruitId);
     res.status(200).send();

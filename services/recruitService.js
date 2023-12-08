@@ -6,8 +6,10 @@ const Recruit = db.Recruit;
 const User = db.User;
 const Schedule = db.Schedule;
 const Time = db.Time;
+const Comment = db.Comment;
 const recruitDto = require('../dto/recruitDto')
 const timeDto = require('../dto/timeDto');
+const commentDto = require('../dto/commentDto');
 
 //pageSize 상수
 const pageSize = 10;
@@ -56,8 +58,8 @@ const getPagedRecruits = async (nextId) => {
 const deleteRecruit = async (userId, recruitId) => {
     const destroyNum = await Recruit.destroy({
         where: {
-            'id': recruitId,
-            'WriterId': userId
+            id: recruitId,
+            WriterId: userId
         }
     });
 
@@ -117,6 +119,8 @@ const participateRecruit = async (userId, recruitId) => {
     recruit.increaseParticipateNum();
     recruit.save();
 }
+
+//-------------시간---------------
 const getAvailableTime = async (recruitId, timeData) => {
     const {startDate, endDate, startTime, endTime, interval} = timeData;
     const recruitUsers = await Recruit.findOne({
@@ -229,7 +233,7 @@ const doVote = async (userId, recruitId, idList) => {
 
 const endVote = async (recruitId) => {
     const recruit = await Recruit.findByPk(recruitId);
-    if(!recruit){
+    if (!recruit) {
         //모집글이 없다면...
     }
     recruit.changeVoteEnd();
@@ -266,21 +270,6 @@ const searchInitialPageData = async (queryParameter) => {
     } else {
         order.push(['createdAt', 'DESC']);
     }
-
-    const recruits = await Recruit.findAll({
-        where: finalWhereCondition,
-        order: order,
-        include: writer !== undefined ? [User] : [],
-        raw: true,
-        limit: pageSize
-    });
-
-    const minId = recruits[recruits.length - 1]?.id || 0;
-
-
-    const recruitsDto = await Promise.all(recruits.map(recruit => recruitDto.fromRecruit(recruit)));
-
-    return {recruits: recruitsDto, minId: minId};
 }
 
 const searchPagedRecruits = async (queryParameter, nextId) => {
@@ -363,6 +352,5 @@ module.exports = {
     searchInitialPageData,
     searchPagedRecruits,
     doVote,
-    endVote,
-    searchRecruit
+    endVote
 };

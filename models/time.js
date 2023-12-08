@@ -26,7 +26,8 @@ module.exports = (sequelize, DataTypes) => {
         Time.belongsToMany(models.User, {
             through: 'TimeUser',
             as: 'Users',
-            timestamps: false
+            timestamps: false,
+            onDelete:'CASCADE'
         })
     }
 
