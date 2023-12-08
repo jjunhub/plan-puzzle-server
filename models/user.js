@@ -41,20 +41,28 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     User.associate = models => {
-        User.hasMany(models.Schedule);
+        User.hasMany(models.Schedule, {
+            onDelete: 'CASCADE'
+        });
         User.hasMany(models.Recruit, {
             as: 'MyRecruits',
-            foreignKey: 'WriterId'
+            foreignKey: 'WriterId',
+            onDelete: 'CASCADE'
         });
         User.belongsToMany(models.Recruit, {
             through: 'RecruitUser',
             as: 'Recruits',
-            timestamps: false
+            timestamps: false,
+            onDelete:'CASCADE'
         });
         User.belongsToMany(models.Time, {
             through: 'TimeUser',
             as: 'Times',
-            timestamps: false
+            timestamps: false,
+            onDelete:'CASCADE'
+        });
+        User.hasMany(models.Comment, {
+            onDelete:'CASCADE'
         });
     }
 
