@@ -82,19 +82,6 @@ const searchRecruit = async (req, res) => {
     res.status(200).json(recruits);
 }
 
-const createComment = async (req, res) => {
-    const recruitId = req.params.recruitId;
-    const userId = req.session.user.id;
-    const commentData = req.body;
-    const response = await recruitService.createComment(userId, recruitId, commentData);
-    res.status(201).json(response);
-}
-const getComments = async (req, res) => {
-    const recruitId = req.params.recruitId;
-    const response = await recruitService.getComments(recruitId);
-    res.status(200).json(response);
-}
-
 module.exports = {
     createRecruit,
     getRecruitData,
@@ -106,7 +93,5 @@ module.exports = {
     showVote,
     doVote,
     endVote,
-    searchRecruit,
-    createComment,
-    getComments
+    searchRecruit
 };

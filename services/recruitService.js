@@ -6,10 +6,8 @@ const Recruit = db.Recruit;
 const User = db.User;
 const Schedule = db.Schedule;
 const Time = db.Time;
-const Comment = db.Comment;
 const recruitDto = require('../dto/recruitDto')
 const timeDto = require('../dto/timeDto');
-const commentDto = require('../dto/commentDto');
 
 //pageSize 상수
 const pageSize = 10;
@@ -255,23 +253,6 @@ const searchRecruit = async (searchKeyword) => {
     return recruitsDto;
 }
 
-//-------------댓글---------------
-const createComment = async (userId, recruitId, commentData) => {
-    const content = commentData.content;
-    return await commentDto.toComment(userId, recruitId, content);
-}
-
-const getComments = async (recruitId) => {
-    const comments = await Comment.findAll({
-        where: {
-            RecruitId: recruitId
-        }
-    });
-    return await Promise.all(comments.map(async (comment) => {
-        return await commentDto.fromComment(comment);
-    }));
-}
-
 module.exports = {
     createRecruit,
     getInitialPageData,
@@ -285,6 +266,4 @@ module.exports = {
     doVote,
     endVote,
     searchRecruit,
-    createComment,
-    getComments
 };

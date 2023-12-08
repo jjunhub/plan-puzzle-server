@@ -1,8 +1,8 @@
 module.exports = (sequelize, DataTypes) => {
     const Comment = sequelize.define('Comment', {
-        content:{
-            type:DataTypes.STRING,
-            allowNull:false
+        content: {
+            type: DataTypes.STRING,
+            allowNull: false
         }
     }, {
         charset: 'utf8',
@@ -16,8 +16,18 @@ module.exports = (sequelize, DataTypes) => {
             onDelete: 'CASCADE'
         });
         Comment.belongsTo(models.User, {
-            onDelete:'CASCADE'
+            onDelete: 'CASCADE'
         });
     }
+
+    Comment.prototype.updateContent = function (content) {
+        if(content) {
+            this.content = content;
+        }
+        else{
+            //error
+        }
+    }
+
     return Comment;
 };
