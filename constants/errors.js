@@ -38,6 +38,32 @@ const NotAuthorizedError = {
     CODE: 400
 }
 
+const InvalidRecruitTimeCategoryError = {
+    MESSAGE: {message: "유효하지 않은 모집 시간 카테고리입니다."},
+    CODE: 400
+}
+
+const InvalidRecruitError = {
+    MESSAGE: {message: "유효하지 않은 모집글입니다."},
+    CODE: 400
+}
+
+// 존재하지 않는 모집글을 삭제하려할 때
+const NotFoundRecruitError = {
+    MESSAGE: {message: "존재하지 않는 모집글입니다."},
+    CODE: 400
+}
+
+const AlreadyExistUserError = {
+    MESSAGE: {message: "이미 존재하는 유저입니다."},
+    CODE: 400
+}
+// 7일 이상 되어야하는데, 7일 미만일 때
+const NotEnoughDaysError = {
+    MESSAGE: {message: "7일 이상 되어야합니다."},
+    CODE: 400
+}
+
 module.exports = {
     LoginError,
     NotFoundError,
@@ -46,6 +72,11 @@ module.exports = {
     SignUpError,
     ScheduleNotFoundError,
     InValidDateError,
-    NotAuthorizedError
+    NotAuthorizedError,
+    InvalidRecruitTimeCategoryError,
+    InvalidRecruitError,
+    NotFoundRecruitError,
+    AlreadyExistUserError,
+    NotEnoughDaysError
 };
 
