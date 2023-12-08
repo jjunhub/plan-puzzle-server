@@ -12,7 +12,7 @@ const {sequelize} = require('./models');
 const {errorHandler} = require("./middlewares/errorHandler");
 const routes = require('./routes');
 const app = express();
-
+const port = process.env.PORT || 3080;
 
 app.use(cors(corsConfig));
 app.use(session(sessionConfig));
@@ -31,7 +31,7 @@ app.use('/api', routes);
 
 app.use(errorHandler);
 
-app.listen(process.env.PORT, function () {
+app.listen(port, function () {
     console.log('Express server is listening at ' + process.env.PORT);
     console.log(process.env.NODE_ENV);
 });
