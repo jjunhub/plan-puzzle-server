@@ -8,16 +8,18 @@ const Schedule = db.Schedule;
 const Time = db.Time;
 const recruitDto = require('../dto/recruitDto')
 const timeDto = require('../dto/timeDto');
+const { InvalidRecruitTimeCategoryError, NotFoundRecruitError, AlreadyExistUserError, NotEnoughDaysError } = require("../constants/errors");
 
 //pageSize 상수
 const pageSize = 10;
 const createRecruit = async (userId, imagePath, recruitData) => {
     const {startTime, endTime, timeCategory} = recruitData;
+
     if (timeCategory === 'TBD' && (startTime || endTime)) {
-        //TBD인데 startTime, endTime중 하나라도 null이 아닐 때
+        throw new Error(InvalidRecruitTimeCategoryError.MESSAGE.message);
     }
     if (timeCategory === 'D' && (!startTime || !endTime)) {
-        //D인데 startTime, endTime중 하나라도 null일 때
+        throw new Error(InvalidRecruitTimeCategoryError.MESSAGE.message);
     }
     await recruitDto.toRecruit({userId, imagePath, ...recruitData});
 }
@@ -62,8 +64,7 @@ const deleteRecruit = async (userId, recruitId) => {
     });
 
     if (!destroyNum) {
-        //throw new Error()
-        //해당하는 userId,recruitId가 없음
+        throw new Error(NotFoundRecruitError.MESSAGE.message);
     }
 }
 
@@ -77,8 +78,7 @@ const updateRecruitState = async (userId, recruitId, state) => {
         }
     });
     if (!recruitNum) {
-        //throw new Error()
-        //해당하는 userId,recruitId가 없음
+        throw new Error(NotFoundRecruitError.MESSAGE.message);
     }
 }
 const participateRecruit = async (userId, recruitId) => {
@@ -99,16 +99,12 @@ const participateRecruit = async (userId, recruitId) => {
     });
 
     if (!recruit) {
-        return;
-        //에러처리
-        //작성자가 참여하려고 했거나, recruit이 없음(삭제됨?)
+        throw new Error(NotFoundRecruitError.MESSAGE.message);
     }
 
     recruit.Users.map(recruitUser => {
         if (recruitUser.getId() === user.getId()) {
-            console.log('에러처리 해야함');
-            return;
-            //에러처리
+            throw new Error(AlreadyExistUserError.MESSAGE.message);
         }
     });
 
@@ -140,8 +136,7 @@ const getAvailableTime = async (recruitId, timeData) => {
     const timeSlots = [];
 
     if (momentStartDate.clone().add(7, 'days').isAfter(momentEndDate)) {
-        //에러처리
-        //일주일 이상 하려함
+        throw new Error(NotEnoughDaysError.MESSAGE.message);
     }
 
     while (!momentStartDate.isAfter(momentEndDate)) {
