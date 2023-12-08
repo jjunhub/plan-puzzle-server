@@ -64,6 +64,10 @@ module.exports = (sequelize, DataTypes) => {
         User.hasMany(models.Comment, {
             onDelete:'CASCADE'
         });
+        User.hasOne(models.Channel,{
+            onDelete:'CASCADE',
+            foreignKey:'id'
+        })
     }
 
     User.prototype.getId = function () {
