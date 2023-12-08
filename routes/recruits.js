@@ -35,7 +35,4 @@ router.put('/:recruitId/times/vote', wrapAsync(recruitController.endVote));
 
 router.get('/search', wrapAsync(recruitController.searchRecruit));
 
-router.post('/:recruitId/comments', wrapAsync(recruitController.createComment));
-router.get('/:recruitId/comments', wrapAsync(recruitController.getComments));
-
 module.exports = router;

@@ -6,10 +6,8 @@ const Recruit = db.Recruit;
 const User = db.User;
 const Schedule = db.Schedule;
 const Time = db.Time;
-const Comment = db.Comment;
 const recruitDto = require('../dto/recruitDto')
 const timeDto = require('../dto/timeDto');
-const commentDto = require('../dto/commentDto');
 
 //pageSize 상수
 const pageSize = 10;
@@ -239,37 +237,104 @@ const endVote = async (recruitId) => {
     recruit.changeVoteEnd();
     recruit.save();
 }
-//-------------시간---------------
-const searchRecruit = async (searchKeyword) => {
-    const recruits = await Recruit.findAll({
-        where: {
-            title: {
-                [Op.like]: `%${searchKeyword}%`
-            }
-        },
-        raw: true
-    });
-    const recruitsDto = await Promise.all(recruits.map(async recruit => {
-        return await recruitDto.fromRecruit(recruit);
-    }));
-    return recruitsDto;
-}
 
-//-------------댓글---------------
-const createComment = async (userId, recruitId, commentData) => {
-    const content = commentData.content;
-    return await commentDto.toComment(userId, recruitId, content);
-}
+const searchInitialPageData = async (queryParameter) => {
+    const {title, content, writer, sort} = queryParameter;
+    let whereConditions = [];
 
-const getComments = async (recruitId) => {
-    const comments = await Comment.findAll({
-        where: {
-            RecruitId: recruitId
+    if (title !== undefined) {
+        whereConditions.push({title: {[Op.like]: `%${title}%`}});
+    }
+    if (content !== undefined) {
+        whereConditions.push({content: {[Op.like]: `%${content}%`}});
+    }
+    if (writer !== undefined) {
+        const writerUser = await User.findOne({
+            where: {nickname: writer}
+        });
+        if (writerUser) {
+            whereConditions.push({WriterId: writerUser.id});
         }
-    });
-    return await Promise.all(comments.map(async (comment) => {
-        return await commentDto.fromComment(comment);
-    }));
+    }
+
+    let finalWhereCondition = {};
+    if (whereConditions.length > 0) {
+        finalWhereCondition = {[Op.or]: whereConditions};
+    }
+
+    let order = [];
+    if (sort === 'oldest') {
+        order.push(['createdAt', 'ASC']);
+    } else {
+        order.push(['createdAt', 'DESC']);
+    }
+}
+
+const searchPagedRecruits = async (queryParameter, nextId) => {
+    const {title, content, writer, sort} = queryParameter;
+    let whereConditions = [];
+
+    if (title !== undefined) {
+        whereConditions.push({title: {[Op.like]: `%${title}%`}});
+    }
+    if (content !== undefined) {
+        whereConditions.push({content: {[Op.like]: `%${content}%`}});
+    }
+    if (writer !== undefined) {
+        const writerUser = await User.findOne({
+            where: {nickname: writer}
+        });
+        if (writerUser) {
+            whereConditions.push({WriterId: writerUser.id});
+        }
+    }
+
+    let finalWhereCondition = {};
+    if (whereConditions.length > 0) {
+        finalWhereCondition = {[Op.or]: whereConditions};
+    }
+
+    let order = [];
+    let recruits, minId;
+    if (sort === 'oldest') {
+        order.push(['createdAt', 'ASC']);
+        recruits = await Recruit.findAll({
+            where: {
+                id: {
+                    [Op.gt]: nextId
+                },
+                ...finalWhereCondition
+            },
+            order: order,
+            include: writer !== undefined ? [User] : [],
+            raw: true,
+            limit: pageSize
+        });
+
+        if (recruits.length < pageSize) minId = 0;
+        else minId = nextId + recruits.length;
+
+    } else {
+        order.push(['createdAt', 'DESC']);
+        recruits = await Recruit.findAll({
+            where: {
+                id: {
+                    [Op.lt]: nextId
+                },
+                ...finalWhereCondition
+            },
+            order: order,
+            include: writer !== undefined ? [User] : [],
+            raw: true,
+            limit: pageSize
+        });
+
+        minId = nextId - pageSize < 0 ? 0 : nextId - pageSize;
+    }
+
+    const recruitsDto = await Promise.all(recruits.map(recruit => recruitDto.fromRecruit(recruit)));
+
+    return {recruits: recruitsDto, minId: minId};
 }
 
 module.exports = {
@@ -282,9 +347,8 @@ module.exports = {
     getAvailableTime,
     saveAvailableTime,
     showVote,
+    searchInitialPageData,
+    searchPagedRecruits,
     doVote,
-    endVote,
-    searchRecruit,
-    createComment,
-    getComments
+    endVote
 };
