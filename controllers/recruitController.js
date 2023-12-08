@@ -2,7 +2,7 @@ const recruitService = require('../services/recruitService');
 const multer = require('multer');
 
 const createRecruit = async (req, res) => {
-    const imagePath = req.file?.path;
+    const imagePath = req.file?.location;
     const recruitData = JSON.parse(req.body.data);
     const userId = req.session.user.id;
     const response = await recruitService.createRecruit(userId, imagePath, recruitData);
