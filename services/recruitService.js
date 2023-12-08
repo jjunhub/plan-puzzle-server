@@ -6,10 +6,8 @@ const Recruit = db.Recruit;
 const User = db.User;
 const Schedule = db.Schedule;
 const Time = db.Time;
-const Comment = db.Comment;
 const recruitDto = require('../dto/recruitDto')
 const timeDto = require('../dto/timeDto');
-const commentDto = require('../dto/commentDto');
 
 //pageSize 상수
 const pageSize = 10;

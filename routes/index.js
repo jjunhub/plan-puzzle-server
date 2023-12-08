@@ -4,11 +4,13 @@ const router = express.Router();
 const users = require('./users');
 const schedules = require('./schedules');
 const recruits = require('./recruits');
+const comments = require('./comments');
 const checkAuth = require('../middlewares/authHandler');
 const wrapAsync = require('../middlewares/wrapAsync');
 
 router.use('/users', users);
 router.use('/schedules', wrapAsync(checkAuth), schedules);
 router.use('/recruits', wrapAsync(checkAuth), recruits);
+router.use('/comments',wrapAsync(checkAuth),comments);
 
 module.exports = router;

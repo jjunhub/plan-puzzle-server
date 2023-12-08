@@ -84,7 +84,6 @@ const searchRecruit = async (req, res) => {
     if (nextId) response = await recruitService.searchPagedRecruits(queryParameter, nextId);
     else response = await recruitService.searchInitialPageData(queryParameter);
 
-
     res.status(200).json(response);
 }
 
