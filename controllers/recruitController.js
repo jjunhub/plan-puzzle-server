@@ -71,7 +71,7 @@ const doVote = async (req, res) => {
     res.status(200).json(response);
 }
 
-const endVote = async(req,res)=>{
+const endVote = async (req, res) => {
     const recruitId = req.params.recruitId;
     await recruitService.endVote(recruitId);
     res.status(200).send();
@@ -80,6 +80,19 @@ const searchRecruit = async (req, res) => {
     const searchKeyword = req.query.keyword;
     const recruits = await recruitService.searchRecruit(searchKeyword);
     res.status(200).json(recruits);
+}
+
+const createComment = async (req, res) => {
+    const recruitId = req.params.recruitId;
+    const userId = req.session.user.id;
+    const commentData = req.body;
+    const response = await recruitService.createComment(userId, recruitId, commentData);
+    res.status(201).json(response);
+}
+const getComments = async (req, res) => {
+    const recruitId = req.params.recruitId;
+    const response = await recruitService.getComments(recruitId);
+    res.status(200).json(response);
 }
 
 module.exports = {
@@ -93,5 +106,7 @@ module.exports = {
     showVote,
     doVote,
     endVote,
-    searchRecruit
+    searchRecruit,
+    createComment,
+    getComments
 };

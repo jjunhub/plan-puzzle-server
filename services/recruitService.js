@@ -6,8 +6,10 @@ const Recruit = db.Recruit;
 const User = db.User;
 const Schedule = db.Schedule;
 const Time = db.Time;
+const Comment = db.Comment;
 const recruitDto = require('../dto/recruitDto')
 const timeDto = require('../dto/timeDto');
+const commentDto = require('../dto/commentDto');
 
 //pageSize 상수
 const pageSize = 10;
@@ -56,8 +58,8 @@ const getPagedRecruits = async (nextId) => {
 const deleteRecruit = async (userId, recruitId) => {
     const destroyNum = await Recruit.destroy({
         where: {
-            'id': recruitId,
-            'WriterId': userId
+            id: recruitId,
+            WriterId: userId
         }
     });
 
@@ -117,6 +119,8 @@ const participateRecruit = async (userId, recruitId) => {
     recruit.increaseParticipateNum();
     recruit.save();
 }
+
+//-------------시간---------------
 const getAvailableTime = async (recruitId, timeData) => {
     const {startDate, endDate, startTime, endTime, interval} = timeData;
     const recruitUsers = await Recruit.findOne({
@@ -229,12 +233,13 @@ const doVote = async (userId, recruitId, idList) => {
 
 const endVote = async (recruitId) => {
     const recruit = await Recruit.findByPk(recruitId);
-    if(!recruit){
+    if (!recruit) {
         //모집글이 없다면...
     }
     recruit.changeVoteEnd();
     recruit.save();
 }
+//-------------시간---------------
 const searchRecruit = async (searchKeyword) => {
     const recruits = await Recruit.findAll({
         where: {
@@ -250,6 +255,22 @@ const searchRecruit = async (searchKeyword) => {
     return recruitsDto;
 }
 
+//-------------댓글---------------
+const createComment = async (userId, recruitId, commentData) => {
+    const content = commentData.content;
+    return await commentDto.toComment(userId, recruitId, content);
+}
+
+const getComments = async (recruitId) => {
+    const comments = await Comment.findAll({
+        where: {
+            RecruitId: recruitId
+        }
+    });
+    return await Promise.all(comments.map(async (comment) => {
+        return await commentDto.fromComment(comment);
+    }));
+}
 
 module.exports = {
     createRecruit,
@@ -263,5 +284,7 @@ module.exports = {
     showVote,
     doVote,
     endVote,
-    searchRecruit
+    searchRecruit,
+    createComment,
+    getComments
 };
