@@ -10,10 +10,6 @@ const toChannel = async (userId, channelData) => {
         content: content,
         recruitUpdatedAt: new Date()
     });
-
-    if (!channel) {
-        //error
-    }
 }
 
 const fromChannel = (channel) => {

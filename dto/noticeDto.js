@@ -10,9 +10,6 @@ const toNotice = async (channelId, noticeData) => {
         imgPath: imgPath || null,
         ChannelId: channelId
     });
-    if (!notice) {
-        //error
-    }
 }
 
 const fromNotice = (notice) => {
