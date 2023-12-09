@@ -135,8 +135,9 @@ const getAvailableTime = async (recruitId, timeData) => {
 
     const timeSlots = [];
 
-    if (momentStartDate.clone().add(7, 'days').isAfter(momentEndDate)) {
+    if (momentEndDate.clone().subtract(7, 'days').isAfter(momentStartDate)) {
         throw new Error(NotEnoughDaysError.MESSAGE.message);
+        //메시지 바꿔야함
     }
 
     while (!momentStartDate.isAfter(momentEndDate)) {
