@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         content: {
-            type: DataTypes.STRING,
+            type: DataTypes.TEXT,
             allowNull: false
         },
         iconImgPath: {
@@ -34,6 +34,9 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'id',
             onDelete: 'CASCADE'
         });
+        Channel.hasMany(models.Notice, {
+            onDelete: 'CASCADE'
+        });
     }
 
     Channel.prototype.updateIconImg = function (newIconImgPath) {
@@ -44,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
 
     Channel.prototype.updateThumbnailImg = function (newThumbnailImgPath) {
         const oldThumbnailImgPath = this.thumbnailImgPath;
-        this.iconImgPath = newThumbnailImgPath;
+        this.thumbnailImgPath = newThumbnailImgPath;
         return oldThumbnailImgPath;
     }
 
