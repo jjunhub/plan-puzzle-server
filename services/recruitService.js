@@ -8,7 +8,12 @@ const Schedule = db.Schedule;
 const Time = db.Time;
 const recruitDto = require('../dto/recruitDto')
 const timeDto = require('../dto/timeDto');
-const { InvalidRecruitTimeCategoryError, NotFoundRecruitError, AlreadyExistUserError, NotEnoughDaysError } = require("../constants/errors");
+const {
+    InvalidRecruitTimeCategoryError,
+    NotFoundRecruitError,
+    AlreadyExistUserError,
+    NotEnoughDaysError
+} = require("../constants/errors");
 
 //pageSize 상수
 const pageSize = 10;
@@ -56,6 +61,7 @@ const getPagedRecruits = async (nextId) => {
 }
 
 const deleteRecruit = async (userId, recruitId) => {
+    const recruit = await Recruit.findByPk(recruitId);
     const destroyNum = await Recruit.destroy({
         where: {
             id: recruitId,
@@ -66,6 +72,8 @@ const deleteRecruit = async (userId, recruitId) => {
     if (!destroyNum) {
         throw new Error(NotFoundRecruitError.MESSAGE.message);
     }
+
+    // recruit.imagePath로 지우기
 }
 
 const updateRecruitState = async (userId, recruitId, state) => {
@@ -81,6 +89,35 @@ const updateRecruitState = async (userId, recruitId, state) => {
     recruit.updateState(state);
     recruit.save();
 }
+
+const updateRecruit = async (userId, recruitId, recruitData) => {
+    const recruit = await Recruit.findOne({
+        where: {
+            id: recruitId,
+            WriterId: userId
+        }
+    });
+    if (!recruit) {
+        throw new Error(NotFoundRecruitError.MESSAGE.message);
+    }
+
+    const {timeCategory, startTime, endTime} = recruitData;
+
+    if (timeCategory === 'TBD' && (startTime || endTime)) {
+        throw new Error(InvalidRecruitTimeCategoryError.MESSAGE.message);
+    }
+    if (timeCategory === 'D' && (!startTime || !endTime)) {
+        throw new Error(InvalidRecruitTimeCategoryError.MESSAGE.message);
+    }
+
+    const oldImgPath = recruit.getImgPath();
+    //oldImgPath 없애기
+
+    recruit.updateRecruit(recruitData);
+    recruit.save();
+    return {message:'recruit update success'};
+}
+
 const participateRecruit = async (userId, recruitId) => {
     const user = await User.findByPk(userId);
     const recruit = await Recruit.findOne({
@@ -347,6 +384,7 @@ module.exports = {
     getPagedRecruits,
     deleteRecruit,
     updateRecruitState,
+    updateRecruit,
     participateRecruit,
     getAvailableTime,
     saveAvailableTime,

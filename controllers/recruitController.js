@@ -35,6 +35,14 @@ const updateRecruitState = async (req, res) => {
     res.status(200).send('모집글 상태 변경 완료');
 }
 
+const updateRecruit = async (req, res) => {
+    const recruitId = req.params.recruitId;
+    const userId = req.session.user.id;
+    const imagePath = req.file?.location;
+    const recruitData = {...JSON.parse(req.body.data), imgPath: imagePath}
+    const response = await recruitService.updateRecruit(userId, recruitId, recruitData);
+    res.status(200).json(response);
+}
 const participateRecruit = async (req, res) => {
     const recruitId = req.params.recruitId;
     const userId = req.session.user.id;
@@ -92,6 +100,7 @@ module.exports = {
     getRecruitData,
     deleteRecruit,
     updateRecruitState,
+    updateRecruit,
     participateRecruit,
     getAvailableTime,
     saveAvailableTime,
