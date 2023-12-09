@@ -14,7 +14,7 @@ const pageSize = 10
 
 const createChannel = async (userId, channelData) => {
     await channelDto.toChannel(userId, channelData);
-    return {message: 'create channel success'};
+    return {message: '채널 생성 성공'};
 }
 
 const getChannelData = async (channelId) => {
@@ -75,13 +75,10 @@ const updateThumbnailImg = async (userId, imgPath) => {
 
 const createNotice = async (userId, noticeData) => {
     await noticeDto.toNotice(userId, noticeData);
-    return {message: 'create notice success'};
+    return {message: '공지사항 생성 성공'};
 }
 
 const updateSubscribe = async (userId, channelId) => {
-    if (userId === channelId) {
-        //구독하려는 채널의 주인이 나임->  이런것도 해야하나? 싶긴함
-    }
 
     const channel = await Channel.findByPk(channelId);
     const user = await User.findByPk(userId);
@@ -143,7 +140,7 @@ const deleteMyChannel = async (userId) => {
            owner:'Channel'
        }
     });
-    return {message: 'delete seuccess'};
+    return {message: '채널 삭제 성공'};
 }
 
 module.exports = {

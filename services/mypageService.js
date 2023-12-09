@@ -11,7 +11,7 @@ const updateUserProfile = async (userId, profileData) => {
     user.updateNickname(nickname);
     user.updateStatusMessage(statusMessage);
     user.save();
-    return {message: 'update profile'};
+    return {message: '유저 프로필 업데이트 성공'};
 }
 
 const getMyRecruits = async (userId) => {
@@ -30,7 +30,7 @@ const checkUser = async (userId, userData) => {
     const {id, password} = userData;
     const user = await User.findByPk(userId);
     if (user.checkUser(id, password)) {
-        return {message: 'check user success'};
+        return {message: '유저 정보 일치'};
     }
     //error 유저랑 id,password 안 맞음
 }
@@ -43,7 +43,7 @@ const changePw = async (userId, userData) => {
     const user = await User.findByPk(userId);
     user.changePw(newPassword);
     user.save();
-    return {message: 'change success'};
+    return {message: '비밀번호 변경 성공'};
 }
 
 module.exports = {updateUserProfile, getMyRecruits, getMySubscription, checkUser, changePw};

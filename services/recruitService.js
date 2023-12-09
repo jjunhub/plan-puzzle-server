@@ -115,7 +115,7 @@ const updateRecruit = async (userId, recruitId, recruitData) => {
 
     recruit.updateRecruit(recruitData);
     recruit.save();
-    return {message:'recruit update success'};
+    return {message:'모집글 수정 성공'};
 }
 
 const participateRecruit = async (userId, recruitId) => {
@@ -151,7 +151,6 @@ const participateRecruit = async (userId, recruitId) => {
     recruit.save();
 }
 
-//-------------시간---------------
 const getAvailableTime = async (recruitId, timeData) => {
     const {startDate, endDate, startTime, endTime, interval} = timeData;
     const recruitUsers = await Recruit.findOne({
