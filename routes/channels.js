@@ -14,6 +14,6 @@ router.post('/notices', upload.single('image'), wrapAsync(channelController.crea
 
 router.put('/:channelId', wrapAsync(channelController.updateSubscribe));
 
-router.get('/', wrapAsync(channelController.getInitialChannelData));
+router.get('/', wrapAsync(channelController.getChannelPage));
 
 module.exports = router;

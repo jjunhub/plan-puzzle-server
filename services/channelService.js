@@ -1,5 +1,5 @@
 const db = require('../models/index');
-// const {Op} = require("sequelize");
+const {Op} = require("sequelize");
 
 const Channel = db.Channel;
 const Notice = db.Notice;
@@ -105,10 +105,26 @@ const getInitialChannelData = async () => {
         order: [['recruitUpdatedAt', 'DESC']],
         limit: pageSize
     });
-    const minId = channels[channels.length - 1]?.id || 0;
-    const channelsDto = channels.map( channel => channelDto.fromChannel(channel));
+    const minDate = channels[channels.length - 1]?.recruitUpdatedAt || null;
+    const channelsDto = channels.map(channel => channelDto.fromChannel(channel));
 
-    return {channels: channelsDto, minId: minId};
+    return {channels: channelsDto, minDate: minDate};
+}
+
+const getPagedChannels = async (minDate) => {
+    const channels = await Channel.findAll({
+        where: {
+            recruitUpdatedAt: {
+                [Op.lt]:minDate
+            }
+        },
+        order: [['recruitUpdatedAt', 'DESC']],
+        limit: pageSize
+    });
+    const nextMinDate = channels[channels.length - 1]?.recruitUpdatedAt || null;
+    const channelsDto = channels.map(channel => channelDto.fromChannel(channel));
+
+    return {channels: channelsDto, minDate: nextMinDate};
 }
 
 
@@ -119,5 +135,6 @@ module.exports = {
     updateThumbnailImg,
     createNotice,
     updateSubscribe,
-    getInitialChannelData
+    getInitialChannelData,
+    getPagedChannels
 };

@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         recruitUpdatedAt:{
             type:DataTypes.DATE,
-            allowNull:true
+            allowNull:false
         }
     }, {
         charset: 'utf8',

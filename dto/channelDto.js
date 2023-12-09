@@ -7,7 +7,8 @@ const toChannel = async (userId, channelData) => {
     const channel = await Channel.create({
         id: userId,
         nickname: title,
-        content: content
+        content: content,
+        recruitUpdatedAt:new Date()
     });
 
     if (!channel) {

@@ -41,8 +41,14 @@ const updateSubscribe = async(req,res)=>{
     res.status(200).json(response);
 }
 
-const getInitialChannelData = async(req,res)=>{
-    const response = await channelService.getInitialChannelData();
+const getChannelPage = async(req,res)=>{
+    const minDate = req.query.minDate;
+
+    let response;
+    if(!minDate) {
+        response = await channelService.getInitialChannelData();
+    }
+    else response = await channelService.getPagedChannels(minDate);
     res.status(200).json(response);
 }
 
@@ -53,5 +59,5 @@ module.exports = {
     updateThumbnailImg,
     createNotice,
     updateSubscribe,
-    getInitialChannelData
+    getChannelPage
 };
