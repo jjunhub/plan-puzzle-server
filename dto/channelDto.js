@@ -8,7 +8,7 @@ const toChannel = async (userId, channelData) => {
         id: userId,
         nickname: title,
         content: content,
-        recruitUpdatedAt:new Date()
+        recruitUpdatedAt: new Date()
     });
 
     if (!channel) {
@@ -28,4 +28,13 @@ const fromChannel = (channel) => {
     };
 }
 
-module.exports = {toChannel, fromChannel}
+const iconFromChannel = (channel) => {
+    const {id, nickname, iconImgPath} = channel;
+    return {
+        id: id,
+        title: nickname,
+        iconImgPath: iconImgPath
+    };
+}
+
+module.exports = {toChannel, fromChannel, iconFromChannel}
