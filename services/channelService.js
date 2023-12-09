@@ -2,6 +2,7 @@ const db = require('../models/index');
 const Channel = db.Channel;
 const Notice = db.Notice;
 const Recruit = db.Recruit;
+const User = db.User;
 
 const channelDto = require("../dto/channelDto");
 const noticeDto = require('../dto/noticeDto');
@@ -14,10 +15,10 @@ const createChannel = async (userId, channelData) => {
 
 const getMyChannel = async (userId) => {
     const channel = await Channel.findByPk(userId);
-    if(!channel){
-        return {channelState:false};
+    if (!channel) {
+        return {channelState: false};
     }
-    const channelsDto = channelDto.fromChannel(channel);
+    let channelsDto = channelDto.fromChannel(channel);
 
     const recruits = await Recruit.findAll({
         where: {
@@ -31,6 +32,7 @@ const getMyChannel = async (userId) => {
             recruitsDto.push(await recruitDto.fromRecruit(recruit));
         }));
     }
+    channelsDto = {...channelsDto, recruitNum: recruitsDto.length};
 
     const notices = await Notice.findAll({
         where: {
@@ -72,10 +74,33 @@ const createNotice = async (userId, noticeData) => {
     return {message: 'create notice success'};
 }
 
+const updateSubscribe = async (userId, channelId) => {
+    if (userId === channelId) {
+        //구독하려는 채널의 주인이 나임->  이런것도 해야하나? 싶긴함
+    }
+
+    const channel = await Channel.findByPk(channelId);
+    const user = await User.findByPk(userId);
+    let response;
+
+    if (await channel.findUserExist(userId)) {
+        channel.removeUsers(user);
+        channel.decreaseFollowerNum();
+        response = {message: '구독 취소'};
+    } else {
+        channel.addUsers(user);
+        channel.increaseFollowerNum();
+        response = {message: '구독 성공'};
+    }
+    channel.save();
+    return response;
+}
+
 module.exports = {
     createChannel,
     getMyChannel,
     updateIconImg,
     updateThumbnailImg,
-    createNotice
+    createNotice,
+    updateSubscribe
 };

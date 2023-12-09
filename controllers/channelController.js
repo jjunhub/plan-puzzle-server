@@ -34,10 +34,18 @@ const createNotice = async (req, res) => {
     res.status(201).json(response);
 }
 
+const updateSubscribe = async(req,res)=>{
+    const userId = req.session.user.id;
+    const channelId = req.params.channelId;
+    const response = await channelService.updateSubscribe(userId,channelId);
+    res.status(200).json(response);
+}
+
 module.exports = {
     createChannel,
     getMyChannel,
     updateIconImg,
     updateThumbnailImg,
-    createNotice
+    createNotice,
+    updateSubscribe
 };
