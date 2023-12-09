@@ -119,8 +119,26 @@ module.exports = (sequelize, DataTypes) => {
         return users?.map(user => user.getId());
     }
 
+    Recruit.prototype.getImgPath = async function () {
+        return this.imagePath;
+    }
+
     Recruit.prototype.updateState = function (state) {
         this.state = state;
+    }
+
+    Recruit.prototype.updateRecruit = function (recruitData) {
+        const {title, content, peopleNum, startDate, endDate, timeCategory, startTime, endTime, imgPath} = recruitData;
+
+        this.title = title;
+        this.content = content;
+        this.peopleNum = peopleNum;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.timeCategory = timeCategory;
+        this.startTime = startTime || null;
+        this.endTime = endTime || null;
+        this.imagePath = imgPath;
     }
 
     return Recruit;

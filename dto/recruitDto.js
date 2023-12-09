@@ -28,7 +28,7 @@ exports.toRecruit = async (recruitData) => {
         regionFirst: regionFirst,
         regionSecond: regionSecond,
         startDate: startDate,
-        endDate: endDate || null,
+        endDate: endDate,
         timeCategory: timeCategory,
         startTime: startTime || null,
         endTime: endTime || null,

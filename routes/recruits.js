@@ -9,8 +9,9 @@ router.post('/', upload.single('image'), wrapAsync(recruitController.createRecru
 router.get('/', wrapAsync(recruitController.getRecruitData));
 
 router.delete('/:recruitId', wrapAsync(recruitController.deleteRecruit));
-router.put('/:recruitId', wrapAsync(recruitController.updateRecruitState));
+router.put('/:recruitId/state', wrapAsync(recruitController.updateRecruitState));
 router.post('/:recruitId', wrapAsync(recruitController.participateRecruit));
+router.put('/:recruitId', upload.single('image'), wrapAsync(recruitController.updateRecruit));
 
 router.post('/:recruitId/times', wrapAsync(recruitController.getAvailableTime));
 router.post('/:recruitId/times/save', wrapAsync(recruitController.saveAvailableTime));
