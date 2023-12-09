@@ -4,14 +4,21 @@ const recruitDto = require('../dto/recruitDto');
 const channelDto = require('../dto/channelDto');
 const User = db.User;
 const {EmptyPasswordError, NotMatchedUserError} = require('../constants/errors')
+const {deleteS3Object} = require('../config/s3Config')
+const {defaultUserImgPath} = require('../constants/defaultImgPath')
 
 const updateUserProfile = async (userId, profileData) => {
     const user = await User.findByPk(userId);
     const {imgPath, nickname, statusMessage} = profileData;
+    const oldImgPath = user.getImgPath();
     user.updateImgPath(imgPath);
     user.updateNickname(nickname);
     user.updateStatusMessage(statusMessage);
     user.save();
+
+    if (oldImgPath !== defaultUserImgPath) {
+        deleteS3Object(oldImgPath);
+    }
     return {message: '유저 프로필 업데이트 성공'};
 }
 

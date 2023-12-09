@@ -1,7 +1,7 @@
 const express = require('express');
 const mypageController = require('../controllers/mypageController');
 const wrapAsync = require("../middlewares/wrapAsync");
-const upload = require("../config/s3Config");
+const upload = require("../config/multerConfig");
 
 const router = express.Router();
 

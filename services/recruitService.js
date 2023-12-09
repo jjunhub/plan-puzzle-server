@@ -8,6 +8,8 @@ const Schedule = db.Schedule;
 const Time = db.Time;
 const recruitDto = require('../dto/recruitDto')
 const timeDto = require('../dto/timeDto');
+const {s3, deleteS3Object} = require('../config/s3Config');
+const { defaultRecruitImgPath } = require("../constants/defaultImgPath");
 const {
     InvalidRecruitTimeCategoryError,
     NotFoundRecruitError,
@@ -17,6 +19,7 @@ const {
 
 //pageSize 상수
 const pageSize = 10;
+
 const createRecruit = async (userId, imagePath, recruitData) => {
     const {startTime, endTime, timeCategory} = recruitData;
 
@@ -73,7 +76,12 @@ const deleteRecruit = async (userId, recruitId) => {
         throw new Error(NotFoundRecruitError.MESSAGE.message);
     }
 
-    // recruit.imagePath로 지우기
+    const imgPath = recruit.getImgPath();
+    if (imgPath !== defaultRecruitImgPath) {
+        deleteS3Object(imgPath);
+    }
+
+    return {message: '모집글 삭제 성공'};
 }
 
 const updateRecruitState = async (userId, recruitId, state) => {
@@ -111,11 +119,14 @@ const updateRecruit = async (userId, recruitId, recruitData) => {
     }
 
     const oldImgPath = recruit.getImgPath();
-    //oldImgPath 없애기
+
+    if (oldImgPath !== defaultRecruitImgPath) {
+        deleteS3Object(oldImgPath);
+    }
 
     recruit.updateRecruit(recruitData);
     recruit.save();
-    return {message:'모집글 수정 성공'};
+    return {message: '모집글 수정 성공'};
 }
 
 const participateRecruit = async (userId, recruitId) => {

@@ -119,7 +119,7 @@ module.exports = (sequelize, DataTypes) => {
         return users?.map(user => user.getId());
     }
 
-    Recruit.prototype.getImgPath = async function () {
+    Recruit.prototype.getImgPath = function () {
         return this.imagePath;
     }
 
