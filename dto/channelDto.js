@@ -5,17 +5,21 @@ const User = db.User;
 const toChannel = async (userId, channelData) => {
     const {title, content} = channelData;
     const channel = await Channel.create({
-        id:userId,
-        title: title,
+        id: userId,
+        nickname: title,
         content: content
     });
-    return fromChannel(channel);
+
+    if (!channel) {
+        //error
+    }
 }
 
 const fromChannel = (channel) => {
-    const {title, content, iconImgPath, thumbnailImgPath} = channel;
+    const {id, nickname, content, iconImgPath, thumbnailImgPath} = channel;
     return {
-        title: title,
+        id: id,
+        title: nickname,
         content: content,
         iconImgPath: iconImgPath,
         thumbnailImgPath: thumbnailImgPath
