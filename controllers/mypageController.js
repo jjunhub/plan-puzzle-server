@@ -9,4 +9,10 @@ const updateUserProfile = async (req, res) => {
     res.status(200).json(response);
 }
 
-module.exports = {updateUserProfile};
+const getMyRecruits = async (req, res) => {
+    const userId = req.session.user.id;
+    const response = await mypageService.getMyRecruits(userId);
+    res.status(200).json(response);
+}
+
+module.exports = {updateUserProfile, getMyRecruits};
