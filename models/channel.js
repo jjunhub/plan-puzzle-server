@@ -15,12 +15,12 @@ module.exports = (sequelize, DataTypes) => {
         iconImgPath:{
             type: DataTypes.STRING,
             allowNull: false,
-            defaultValue: 'uploads/recruits/default.jpg'
+            defaultValue: 'uploads/channels/default.jpg'
         },
         thumbnailImgPath:{
             type: DataTypes.STRING,
             allowNull: false,
-            defaultValue: 'uploads/recruits/default.jpg'
+            defaultValue: 'uploads/channels/default.jpg'
         }
     }, {
         charset: 'utf8',
@@ -34,6 +34,16 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey:'id',
             onDelete: 'CASCADE'
         });
+    }
+
+    Channel.prototype.updateIconImg = function(newIconImgPath){
+        const oldIconImgPath = this.iconImgPath;
+        this.iconImgPath = newIconImgPath;
+        return oldIconImgPath;
+    }
+
+    Channel.prototype.getIconImg = function(){
+        return this.iconImgPath;
     }
 
 
