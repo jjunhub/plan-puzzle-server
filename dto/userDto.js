@@ -20,6 +20,6 @@ exports.fromUser = (user) => {
         name: name,
         nickname: nickname,
         email: email,
-        image: image
+        imagePath: image
     };
 }

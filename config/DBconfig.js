@@ -6,7 +6,8 @@ const development = {
     password: "1234",
     database: "plan_puzzle",
     host: "127.0.0.1",
-    dialect: "mysql"
+    dialect: "mysql",
+    timezone: "+09:00"
 }
 
 const test = {
