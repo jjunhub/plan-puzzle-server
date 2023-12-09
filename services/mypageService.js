@@ -1,9 +1,8 @@
 const db = require('../models/index');
 const {Op} = require("sequelize");
-const recruitDto = require("../dto/recruitDto");
-
+const recruitDto = require('../dto/recruitDto');
+const channelDto = require('../dto/channelDto');
 const User = db.User;
-const Recruit = db.Recruit;
 
 const updateUserProfile = async (userId, profileData) => {
     const user = await User.findByPk(userId);
@@ -21,4 +20,10 @@ const getMyRecruits = async (userId) => {
     return await Promise.all(recruits.map(recruit => recruitDto.fromRecruit(recruit)));
 }
 
-module.exports = {updateUserProfile,getMyRecruits};
+const getMySubscription = async (userId) => {
+    const user = await User.findByPk(userId);
+    const channels = await user.getChannels();
+    return await Promise.all(channels.map(channel => channelDto.iconFromChannel(channel)));
+}
+
+module.exports = {updateUserProfile, getMyRecruits, getMySubscription};
