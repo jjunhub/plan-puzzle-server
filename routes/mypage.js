@@ -7,6 +7,6 @@ const router = express.Router();
 
 router.put('/', upload.single('image'), wrapAsync(mypageController.updateUserProfile));
 router.get('/recruits',wrapAsync(mypageController.getMyRecruits));
-router.get('/subscribe',wrapAsync(mypageController.getMySubscription));
+router.get('/subscriptions',wrapAsync(mypageController.getMySubscription));
 
 module.exports = router;
