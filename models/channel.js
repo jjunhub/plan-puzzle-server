@@ -1,3 +1,5 @@
+const {defaultChannelThumbnailPath, defaultChannelIconPath} = require('../constants/defaultImgPath')
+
 module.exports = (sequelize, DataTypes) => {
     const Channel = sequelize.define('Channel', {
         id: {
@@ -20,12 +22,12 @@ module.exports = (sequelize, DataTypes) => {
         iconImgPath: {
             type: DataTypes.STRING,
             allowNull: false,
-            defaultValue: 'uploads/channels/default.jpg'
+            defaultValue: defaultChannelIconPath
         },
         thumbnailImgPath: {
             type: DataTypes.STRING,
             allowNull: false,
-            defaultValue: 'uploads/channels/default.jpg'
+            defaultValue: defaultChannelThumbnailPath
         },
         recruitUpdatedAt:{
             type:DataTypes.DATE,

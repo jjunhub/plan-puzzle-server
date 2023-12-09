@@ -1,3 +1,5 @@
+const {defaultUserImgPath} = require('../constants/defaultImgPath')
+
 module.exports = (sequelize, DataTypes) => {
     const User = sequelize.define('User', {
         userId: {
@@ -33,10 +35,7 @@ module.exports = (sequelize, DataTypes) => {
         imagePath: {
             type: DataTypes.STRING,
             allowNull: false,
-            defaultValue: 'uploads/users/default.jpg',
-            // validate: {
-            //     isUrl: true
-            // }
+            defaultValue: defaultUserImgPath
         }
     }, {
         charset: 'utf8',

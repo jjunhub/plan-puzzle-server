@@ -1,3 +1,5 @@
+const {defaultRecruitImgPath} = require('../constants/defaultImgPath')
+
 module.exports = (sequelize, DataTypes) => {
     const Recruit = sequelize.define('Recruit', {
         title: {
@@ -53,7 +55,7 @@ module.exports = (sequelize, DataTypes) => {
         imagePath: {
             type: DataTypes.STRING,
             allowNull: true,
-            defaultValue: 'uploads/recruits/default.jpg'
+            defaultValue: defaultRecruitImgPath
         },
         owner: {
             type: DataTypes.ENUM('User', 'Channel'),
