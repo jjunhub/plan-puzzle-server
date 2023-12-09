@@ -15,15 +15,17 @@ const test = {
     password: null,
     database: "database_test",
     host: "127.0.0.1",
-    dialect: "mysql"
+    dialect: "mysql",
+    timezone: "+09:00"
 }
 
 const production = {
-  username: env.DB_USER,
-  password: env.DB_PASS,
-  database: env.DB_NAME,
-  host: env.DB_HOST,
-  dialect: "mysql"
+    username: env.DB_USER,
+    password: env.DB_PASS,
+    database: env.DB_NAME,
+    host: env.DB_HOST,
+    dialect: "mysql",
+    timezone: "+09:00"
 }
 
 module.exports = {development, test, production};

@@ -109,5 +109,9 @@ module.exports = (sequelize, DataTypes) => {
         this.userPw = newPassword;
     }
 
+    User.prototype.getImgPath = function () {
+        return this.imagePath;
+    }
+
     return User;
 };

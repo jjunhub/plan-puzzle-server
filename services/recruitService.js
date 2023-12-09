@@ -8,15 +8,18 @@ const Schedule = db.Schedule;
 const Time = db.Time;
 const recruitDto = require('../dto/recruitDto')
 const timeDto = require('../dto/timeDto');
+const {s3, deleteS3Object} = require('../config/s3Config');
+const { defaultRecruitImgPath } = require("../constants/defaultImgPath");
 const {
     InvalidRecruitTimeCategoryError,
     NotFoundRecruitError,
     AlreadyExistUserError,
-    NotEnoughDaysError
+    ExceedDaysError
 } = require("../constants/errors");
 
 //pageSize 상수
 const pageSize = 10;
+
 const createRecruit = async (userId, imagePath, recruitData) => {
     const {startTime, endTime, timeCategory} = recruitData;
 
@@ -73,7 +76,12 @@ const deleteRecruit = async (userId, recruitId) => {
         throw new Error(NotFoundRecruitError.MESSAGE.message);
     }
 
-    // recruit.imagePath로 지우기
+    const imgPath = recruit.getImgPath();
+    if (imgPath !== defaultRecruitImgPath) {
+        deleteS3Object(imgPath);
+    }
+
+    return {message: '모집글 삭제 성공'};
 }
 
 const updateRecruitState = async (userId, recruitId, state) => {
@@ -111,7 +119,10 @@ const updateRecruit = async (userId, recruitId, recruitData) => {
     }
 
     const oldImgPath = recruit.getImgPath();
-    //oldImgPath 없애기
+
+    if (oldImgPath !== defaultRecruitImgPath) {
+        deleteS3Object(oldImgPath);
+    }
 
     if(timeCategory !== recruit.getTimeCategory()){
         await Time.destroy({
@@ -124,7 +135,7 @@ const updateRecruit = async (userId, recruitId, recruitData) => {
 
     recruit.updateRecruit(recruitData);
     recruit.save();
-    return {message:'모집글 수정 성공'};
+    return {message: '모집글 수정 성공'};
 }
 
 const participateRecruit = async (userId, recruitId) => {
@@ -181,8 +192,7 @@ const getAvailableTime = async (recruitId, timeData) => {
     const timeSlots = [];
 
     if (momentEndDate.clone().subtract(7, 'days').isAfter(momentStartDate)) {
-        throw new Error(NotEnoughDaysError.MESSAGE.message);
-        //메시지 바꿔야함
+        throw new Error(ExceedDaysError.MESSAGE.message);
     }
 
     while (!momentStartDate.isAfter(momentEndDate)) {
@@ -273,7 +283,7 @@ const doVote = async (userId, recruitId, idList) => {
 const endVote = async (recruitId) => {
     const recruit = await Recruit.findByPk(recruitId);
     if (!recruit) {
-        //모집글이 없다면...
+        throw new Error(NotFoundRecruitError.MESSAGE.message);
     }
     recruit.changeVoteEnd();
     recruit.save();
@@ -317,8 +327,12 @@ const searchInitialPageData = async (queryParameter) => {
         limit: pageSize
     });
 
+    let minId;
+    if (recruits.length < pageSize) minId = 0;
+    else minId = recruits[recruits.length - 1]?.id || 0;
+
     const recruitsDto = await Promise.all(recruits.map(async recruit => await recruitDto.fromRecruit(recruit)));
-    return {recruits: recruitsDto, minId: recruits[recruits.length - 1]?.id || 0};
+    return {recruits: recruitsDto, minId: minId};
 }
 
 const searchPagedRecruits = async (queryParameter, nextId) => {

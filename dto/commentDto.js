@@ -8,10 +8,6 @@ const toComment = async (userId, recruitId, content) => {
         RecruitId: recruitId,
         UserId: userId
     });
-
-    if (!comment) {
-        //error
-    }
     return await fromComment(comment);
 }
 

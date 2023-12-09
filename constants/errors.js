@@ -58,9 +58,19 @@ const AlreadyExistUserError = {
     MESSAGE: {message: "이미 존재하는 유저입니다."},
     CODE: 400
 }
-// 7일 이상 되어야하는데, 7일 미만일 때
-const NotEnoughDaysError = {
-    MESSAGE: {message: "7일 이상 되어야합니다."},
+
+const ExceedDaysError = {
+    MESSAGE: {message: "모집 기간은 7일 이하여야 합니다."},
+    CODE: 400
+}
+
+const NotMatchedUserError = {
+    MESSAGE: {message: "유저 정보 불일치"},
+    CODE: 400
+}
+
+const EmptyPasswordError = {
+    MESSAGE: {message: "비밀번호를 입력해주세요"},
     CODE: 400
 }
 
@@ -77,6 +87,8 @@ module.exports = {
     InvalidRecruitError,
     NotFoundRecruitError,
     AlreadyExistUserError,
-    NotEnoughDaysError
+    ExceedDaysError,
+    NotMatchedUserError,
+    EmptyPasswordError
 };
 

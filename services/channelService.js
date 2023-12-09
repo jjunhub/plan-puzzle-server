@@ -9,8 +9,11 @@ const User = db.User;
 const channelDto = require("../dto/channelDto");
 const noticeDto = require('../dto/noticeDto');
 const recruitDto = require('../dto/recruitDto');
+const {deleteS3Object} = require('../config/s3Config')
+const {defaultChannelThumbnailPath, defaultChannelIconPath} = require('../constants/defaultImgPath')
 
 const pageSize = 10
+
 
 const createChannel = async (userId, channelData) => {
     await channelDto.toChannel(userId, channelData);
@@ -57,8 +60,8 @@ const updateIconImg = async (userId, imgPath) => {
     const channel = await Channel.findByPk(userId);
     const oldIconImgPath = channel.updateIconImg(imgPath);
     channel.save();
-    if (oldIconImgPath !== 'uploads/channels/default.jpg') {
-        //원래꺼 삭제하는 로직 추가
+    if (oldIconImgPath !== defaultChannelIconPath) {
+        deleteS3Object(oldIconImgPath);
     }
     return channel.getIconImg();
 }
@@ -67,8 +70,8 @@ const updateThumbnailImg = async (userId, imgPath) => {
     const channel = await Channel.findByPk(userId);
     const oldThumbnailImg = channel.updateThumbnailImg(imgPath);
     channel.save();
-    if (oldThumbnailImg !== 'uploads/channels/default.jpg') {
-        //원래꺼 삭제하는 로직 추가
+    if (oldThumbnailImg !== defaultChannelThumbnailPath) {
+        deleteS3Object(oldThumbnailImg);
     }
     return channel.getThumbnailImg();
 }
@@ -135,10 +138,10 @@ const deleteMyChannel = async (userId) => {
         //삭제된게 없음...
     }
     await Recruit.destroy({
-       where:{
-           WriterId:userId,
-           owner:'Channel'
-       }
+        where: {
+            WriterId: userId,
+            owner: 'Channel'
+        }
     });
     return {message: '채널 삭제 성공'};
 }
