@@ -26,12 +26,13 @@ module.exports = (sequelize, DataTypes) => {
                 isEmail: true
             }
         },
-        image: {
+        imagePath: {
             type: DataTypes.STRING,
-            allowNull: true,
-            validate: {
-                isUrl: true
-            }
+            allowNull: false,
+            defaultValue: 'uploads/recruits/default.jpg',
+            // validate: {
+            //     isUrl: true
+            // }
         }
     }, {
         charset: 'utf8',

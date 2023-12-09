@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             primaryKey: true
         },
-        name:{
+        title:{
             type: DataTypes.STRING(30),
             allowNull: false
         },
@@ -15,12 +15,12 @@ module.exports = (sequelize, DataTypes) => {
         iconImgPath:{
             type: DataTypes.STRING,
             allowNull: false,
-            //defaultValue:
+            defaultValue: 'uploads/recruits/default.jpg'
         },
         thumbnailImgPath:{
             type: DataTypes.STRING,
             allowNull: false,
-            //defaultValue:
+            defaultValue: 'uploads/recruits/default.jpg'
         }
     }, {
         charset: 'utf8',
