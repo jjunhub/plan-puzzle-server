@@ -307,8 +307,12 @@ const searchInitialPageData = async (queryParameter) => {
         limit: pageSize
     });
 
+    let minId;
+    if (recruits.length < pageSize) minId = 0;
+    else minId = recruits[recruits.length - 1]?.id || 0;
+
     const recruitsDto = await Promise.all(recruits.map(async recruit => await recruitDto.fromRecruit(recruit)));
-    return {recruits: recruitsDto, minId: recruits[recruits.length - 1]?.id || 0};
+    return {recruits: recruitsDto, minId: minId};
 }
 
 const searchPagedRecruits = async (queryParameter, nextId) => {
