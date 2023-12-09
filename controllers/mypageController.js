@@ -21,6 +21,12 @@ const getMySubscription = async (req, res) => {
     res.status(200).json(response);
 }
 
+const getMyParticipants = async (req, res) => {
+    const userId = req.session.user.id;
+    const response = await mypageService.getMyParticipants(userId);
+    res.status(200).json(response);
+}
+
 const checkUser = async (req, res) => {
     const userId = req.session.user.id;
     const userData = req.body;
@@ -35,4 +41,4 @@ const changePw = async (req, res) => {
     res.status(200).json(response);
 }
 
-module.exports = {updateUserProfile, getMyRecruits, getMySubscription, checkUser, changePw};
+module.exports = {updateUserProfile, getMyRecruits, getMySubscription, getMyParticipants, checkUser, changePw};
