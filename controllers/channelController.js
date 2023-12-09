@@ -7,12 +7,21 @@ const createChannel = async (req, res) => {
     res.status(201).json(response);
 }
 
-const getMyChannel = async(req,res)=>{
+const getMyChannel = async (req, res) => {
     const userId = req.session.user.id;
     const response = await channelService.getMyChannel(userId);
     res.status(200).json(response);
 }
+
+const updateIconImg = async (req, res) => {
+    const imgPath = req.file?.location;
+    const userId = req.session.user.id;
+    const response = await channelService.updateIconImg(userId, imgPath);
+    res.status(200).json(response);
+}
+
 module.exports = {
     createChannel,
-    getMyChannel
+    getMyChannel,
+    updateIconImg
 };

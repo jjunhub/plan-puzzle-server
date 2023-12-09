@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
         imagePath: {
             type: DataTypes.STRING,
             allowNull: false,
-            defaultValue: 'uploads/recruits/default.jpg',
+            defaultValue: 'uploads/users/default.jpg',
             // validate: {
             //     isUrl: true
             // }

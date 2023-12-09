@@ -12,7 +12,18 @@ const getMyChannel = async (userId) => {
     return channelDto.fromChannel(channel);
 }
 
+const updateIconImg = async (userId, imgPath) => {
+    const channel = await Channel.findByPk(userId);
+    const oldIconImgPath = channel.updateIconImg(imgPath);
+    channel.save();
+    if(oldIconImgPath !=='uploads/channels/default.jpg'){
+        //원래꺼 삭제하는 로직 추가
+    }
+    return channel.getIconImg();
+}
+
 module.exports = {
     createChannel,
-    getMyChannel
+    getMyChannel,
+    updateIconImg
 };
