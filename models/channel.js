@@ -97,5 +97,14 @@ module.exports = (sequelize, DataTypes) => {
         return this.thumbnailImgPath;
     }
 
+    Channel.prototype.getId = function () {
+        return this.id;
+    }
+
+    Channel.prototype.getNickname = function () {
+        return this.nickname;
+    }
+
+
     return Channel;
 };
