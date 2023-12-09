@@ -13,13 +13,14 @@ exports.toUser = async (userData) => {
 }
 
 exports.fromUser = (user) => {
-    const {id, userId, name, nickname, email, image} = user;
+    const {id, userId, name, nickname, email, image, statusMessage} = user;
     return {
         id: id,
         userId: userId,
         name: name,
         nickname: nickname,
         email: email,
-        imagePath: image
+        imagePath: image,
+        statusMessage: statusMessage || null
     };
 }
