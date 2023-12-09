@@ -113,6 +113,15 @@ const updateRecruit = async (userId, recruitId, recruitData) => {
     const oldImgPath = recruit.getImgPath();
     //oldImgPath 없애기
 
+    if(timeCategory !== recruit.getTimeCategory()){
+        await Time.destroy({
+            where:{
+                recruitId:recruitId
+            }
+        });
+        recruit.changeVoteBefore();
+    }
+
     recruit.updateRecruit(recruitData);
     recruit.save();
     return {message:'모집글 수정 성공'};

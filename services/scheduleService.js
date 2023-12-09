@@ -1,9 +1,16 @@
 const {Op} = require('sequelize');
+
 const moment = require('moment');
 require('moment/locale/ko');
+
 const db = require('../models/index');
 const Schedule = db.Schedule;
+const Notice = db.Notice;
+const User = db.User;
+const Channel = db.Channel;
+
 const scheduleDto = require('../dto/scheduleDto')
+const noticeDto = require('../dto/noticeDto');
 const {ScheduleNotFoundError, InValidDateError} = require('../constants/errors');
 
 const loadHome = async (userId) => {
@@ -21,11 +28,35 @@ const loadHome = async (userId) => {
         }
     });
 
+    const user = await User.findByPk(userId);
+    const subscribeChannels = await user.getChannels();
+    const subscribeChannelIdList = subscribeChannels.map(channel => channel.getId());
+    const subscribeNotices = await Notice.findAll({
+        where: {
+            ChannelId: {
+                [Op.in]: subscribeChannelIdList
+            }
+        },
+        include: [{
+            model: Channel,
+            as: 'Channel',
+            attributes: ['id', 'nickname'] // 채널의 닉네임을 가져오기 위해 include 설정
+        }],
+        order: [['updatedAt', 'DESC']],
+        limit: 5
+    });
+
     const nextSchedulesDto = nextSchedules.map(schedule => scheduleDto.fromSchedule(schedule));
-
-    return {schedules: schedulesDto, nextSchedules: nextSchedulesDto};
-
-    // subscirbNotices 추가해야함 나중에 모집글 + 채널 완성하면
+    const noticesForRes = subscribeNotices.map(notice => {
+        return {
+            title: notice.getTitle(),
+            content: notice.getContent(),
+            channelId: notice.Channel.getId(),
+            channelNickname: notice.Channel.getNickname(),
+            channelIconImg: notice.Channel.getIconImg() || null
+        }
+    });
+    return {schedules: schedulesDto, nextSchedules: nextSchedulesDto, subscribeNotices: noticesForRes};
 }
 
 const showSchedules = async (userId, date) => {
