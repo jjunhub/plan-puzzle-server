@@ -6,7 +6,9 @@ const upload = require("../config/s3Config");
 const router = express.Router();
 
 router.post('/', wrapAsync(channelController.createChannel));
+
 router.get('/mychannel', wrapAsync(channelController.getMyChannel));
+router.get('/:channelId',wrapAsync(channelController.getChannelData));
 
 router.post('/icon', upload.single('image'), wrapAsync(channelController.updateIconImg));
 router.post('/thumbnail', upload.single('image'), wrapAsync(channelController.updateThumbnailImg));

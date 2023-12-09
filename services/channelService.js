@@ -17,8 +17,8 @@ const createChannel = async (userId, channelData) => {
     return {message: 'create channel success'};
 }
 
-const getMyChannel = async (userId) => {
-    const channel = await Channel.findByPk(userId);
+const getChannelData = async (channelId) => {
+    const channel = await Channel.findByPk(channelId);
     if (!channel) {
         return {channelState: false};
     }
@@ -26,7 +26,7 @@ const getMyChannel = async (userId) => {
 
     const recruits = await Recruit.findAll({
         where: {
-            WriterId: userId,
+            WriterId: channelId,
             owner: 'Channel'
         }
     });
@@ -40,7 +40,7 @@ const getMyChannel = async (userId) => {
 
     const notices = await Notice.findAll({
         where: {
-            ChannelId: userId
+            ChannelId: channelId
         }
     });
     let noticesDto = [];
@@ -115,7 +115,7 @@ const getPagedChannels = async (minDate) => {
     const channels = await Channel.findAll({
         where: {
             recruitUpdatedAt: {
-                [Op.lt]:minDate
+                [Op.lt]: minDate
             }
         },
         order: [['recruitUpdatedAt', 'DESC']],
@@ -127,10 +127,9 @@ const getPagedChannels = async (minDate) => {
     return {channels: channelsDto, minDate: nextMinDate};
 }
 
-
 module.exports = {
     createChannel,
-    getMyChannel,
+    getChannelData,
     updateIconImg,
     updateThumbnailImg,
     createNotice,
