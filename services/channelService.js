@@ -127,6 +127,25 @@ const getPagedChannels = async (minDate) => {
     return {channels: channelsDto, minDate: nextMinDate};
 }
 
+const deleteMyChannel = async (userId) => {
+    const destroyNum = await Channel.destroy({
+        where: {
+            id: userId
+        }
+    });
+
+    if (!destroyNum) {
+        //삭제된게 없음...
+    }
+    await Recruit.destroy({
+       where:{
+           WriterId:userId,
+           owner:'Channel'
+       }
+    });
+    return {message: 'delete seuccess'};
+}
+
 module.exports = {
     createChannel,
     getChannelData,
@@ -135,5 +154,6 @@ module.exports = {
     createNotice,
     updateSubscribe,
     getInitialChannelData,
-    getPagedChannels
+    getPagedChannels,
+    deleteMyChannel
 };

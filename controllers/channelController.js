@@ -34,30 +34,34 @@ const updateThumbnailImg = async (req, res) => {
 }
 
 const createNotice = async (req, res) => {
-    const noticeData = {... JSON.parse(req.body.data), imgPath: req.file?.location};
+    const noticeData = {...JSON.parse(req.body.data), imgPath: req.file?.location};
     const userId = req.session.user.id;
     const response = await channelService.createNotice(userId, noticeData);
     res.status(201).json(response);
 }
 
-const updateSubscribe = async(req,res)=>{
+const updateSubscribe = async (req, res) => {
     const userId = req.session.user.id;
     const channelId = req.params.channelId;
-    const response = await channelService.updateSubscribe(userId,channelId);
+    const response = await channelService.updateSubscribe(userId, channelId);
     res.status(200).json(response);
 }
 
-const getChannelPage = async(req,res)=>{
+const getChannelPage = async (req, res) => {
     const minDate = req.query.minDate;
 
     let response;
-    if(!minDate) {
+    if (!minDate) {
         response = await channelService.getInitialChannelData();
-    }
-    else response = await channelService.getPagedChannels(minDate);
+    } else response = await channelService.getPagedChannels(minDate);
     res.status(200).json(response);
 }
 
+const deleteMyChannel = async (req, res) => {
+    const userId = req.session.user.id;
+    const response = await channelService.deleteMyChannel(userId);
+    return res.status(200).json(response);
+}
 module.exports = {
     createChannel,
     getMyChannel,
@@ -66,5 +70,6 @@ module.exports = {
     updateThumbnailImg,
     createNotice,
     updateSubscribe,
-    getChannelPage
+    getChannelPage,
+    deleteMyChannel
 };
