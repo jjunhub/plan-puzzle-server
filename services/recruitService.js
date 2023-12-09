@@ -12,7 +12,7 @@ const {
     InvalidRecruitTimeCategoryError,
     NotFoundRecruitError,
     AlreadyExistUserError,
-    NotEnoughDaysError
+    ExceedDaysError
 } = require("../constants/errors");
 
 //pageSize 상수
@@ -172,8 +172,7 @@ const getAvailableTime = async (recruitId, timeData) => {
     const timeSlots = [];
 
     if (momentEndDate.clone().subtract(7, 'days').isAfter(momentStartDate)) {
-        throw new Error(NotEnoughDaysError.MESSAGE.message);
-        //메시지 바꿔야함
+        throw new Error(ExceedDaysError.MESSAGE.message);
     }
 
     while (!momentStartDate.isAfter(momentEndDate)) {
@@ -264,7 +263,7 @@ const doVote = async (userId, recruitId, idList) => {
 const endVote = async (recruitId) => {
     const recruit = await Recruit.findByPk(recruitId);
     if (!recruit) {
-        //모집글이 없다면...
+        throw new Error(NotFoundRecruitError.MESSAGE.message);
     }
     recruit.changeVoteEnd();
     recruit.save();
