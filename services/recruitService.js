@@ -69,17 +69,17 @@ const deleteRecruit = async (userId, recruitId) => {
 }
 
 const updateRecruitState = async (userId, recruitId, state) => {
-    const recruitNum = await Recruit.update({
-        state: state
-    }, {
+    const recruit = await Recruit.findOne({
         where: {
             id: recruitId,
             WriterId: userId
         }
     });
-    if (!recruitNum) {
+    if (!recruit) {
         throw new Error(NotFoundRecruitError.MESSAGE.message);
     }
+    recruit.updateState(state);
+    recruit.save();
 }
 const participateRecruit = async (userId, recruitId) => {
     const user = await User.findByPk(userId);
