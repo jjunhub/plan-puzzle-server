@@ -16,12 +16,14 @@ const toNotice = async (channelId, noticeData) => {
 }
 
 const fromNotice = (notice) => {
-    const {id, title, content, imgPath} = notice;
+    const {id, title, content, imgPath, updatedAt} = notice;
+    const update = new Date(updatedAt).toLocaleString()
     return {
         id: id,
         title: title,
         content: content,
-        imgPath: imgPath || null
+        imgPath: imgPath || null,
+        updatedAt: update
     };
 }
 

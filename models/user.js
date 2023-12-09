@@ -68,7 +68,13 @@ module.exports = (sequelize, DataTypes) => {
         User.hasOne(models.Channel,{
             onDelete:'CASCADE',
             foreignKey:'id'
-        })
+        });
+        User.belongsToMany(models.Channel,{
+            through: 'Subscription',
+            as: 'Channels',
+            timestamps: false,
+            onDelete:'CASCADE'
+        });
     }
 
     User.prototype.getId = function () {

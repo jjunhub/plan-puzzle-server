@@ -9,7 +9,13 @@ const createChannel = async (req, res) => {
 
 const getMyChannel = async (req, res) => {
     const userId = req.session.user.id;
-    const response = await channelService.getMyChannel(userId);
+    const response = await channelService.getChannelData(userId);
+    res.status(200).json(response);
+}
+
+const getChannelData = async (req, res) => {
+    const channelId = req.params.channelId;
+    const response = await channelService.getChannelData(channelId);
     res.status(200).json(response);
 }
 
@@ -34,10 +40,31 @@ const createNotice = async (req, res) => {
     res.status(201).json(response);
 }
 
+const updateSubscribe = async(req,res)=>{
+    const userId = req.session.user.id;
+    const channelId = req.params.channelId;
+    const response = await channelService.updateSubscribe(userId,channelId);
+    res.status(200).json(response);
+}
+
+const getChannelPage = async(req,res)=>{
+    const minDate = req.query.minDate;
+
+    let response;
+    if(!minDate) {
+        response = await channelService.getInitialChannelData();
+    }
+    else response = await channelService.getPagedChannels(minDate);
+    res.status(200).json(response);
+}
+
 module.exports = {
     createChannel,
     getMyChannel,
+    getChannelData,
     updateIconImg,
     updateThumbnailImg,
-    createNotice
+    createNotice,
+    updateSubscribe,
+    getChannelPage
 };

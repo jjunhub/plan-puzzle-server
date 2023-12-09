@@ -7,7 +7,8 @@ const toChannel = async (userId, channelData) => {
     const channel = await Channel.create({
         id: userId,
         nickname: title,
-        content: content
+        content: content,
+        recruitUpdatedAt:new Date()
     });
 
     if (!channel) {
@@ -16,11 +17,12 @@ const toChannel = async (userId, channelData) => {
 }
 
 const fromChannel = (channel) => {
-    const {id, nickname, content, iconImgPath, thumbnailImgPath} = channel;
+    const {id, nickname, content, followerNum, iconImgPath, thumbnailImgPath} = channel;
     return {
         id: id,
         title: nickname,
         content: content,
+        followerNum: followerNum,
         iconImgPath: iconImgPath,
         thumbnailImgPath: thumbnailImgPath
     };

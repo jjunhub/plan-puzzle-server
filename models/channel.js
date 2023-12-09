@@ -12,6 +12,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             allowNull: false
         },
+        followerNum:{
+            type:DataTypes.INTEGER,
+            allowNull:false,
+            defaultValue:0
+        },
         iconImgPath: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -21,6 +26,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
             defaultValue: 'uploads/channels/default.jpg'
+        },
+        recruitUpdatedAt:{
+            type:DataTypes.DATE,
+            allowNull:false
         }
     }, {
         charset: 'utf8',
@@ -37,6 +46,12 @@ module.exports = (sequelize, DataTypes) => {
         Channel.hasMany(models.Notice, {
             onDelete: 'CASCADE'
         });
+        Channel.belongsToMany(models.User,{
+            through: 'Subscription',
+            as: 'Users',
+            timestamps: false,
+            onDelete:'CASCADE'
+        });
     }
 
     Channel.prototype.updateIconImg = function (newIconImgPath) {
@@ -49,6 +64,29 @@ module.exports = (sequelize, DataTypes) => {
         const oldThumbnailImgPath = this.thumbnailImgPath;
         this.thumbnailImgPath = newThumbnailImgPath;
         return oldThumbnailImgPath;
+    }
+
+    Channel.prototype.findUserExist = async function (userId) {
+        let state = false;
+        const users = await this.getUsers();
+        users?.map(user => {
+            if (user.getId() === userId) {
+                state=true
+            }
+        });
+        return state;
+    }
+
+    Channel.prototype.increaseFollowerNum = function () {
+        this.followerNum += 1;
+    }
+
+    Channel.prototype.decreaseFollowerNum = function () {
+        this.followerNum -= 1;
+    }
+
+    Channel.prototype.updateRecruitDate = function () {
+        this.recruitUpdatedAt = new Date();
     }
 
     Channel.prototype.getIconImg = function () {
