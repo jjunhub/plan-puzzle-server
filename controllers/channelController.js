@@ -20,8 +20,16 @@ const updateIconImg = async (req, res) => {
     res.status(200).json(response);
 }
 
+const updateThumbnailImg = async (req, res) => {
+    const imgPath = req.file?.location;
+    const userId = req.session.user.id;
+    const response = await channelService.updateThumbnailImg(userId, imgPath);
+    res.status(200).json(response);
+}
+
 module.exports = {
     createChannel,
     getMyChannel,
-    updateIconImg
+    updateIconImg,
+    updateThumbnailImg
 };

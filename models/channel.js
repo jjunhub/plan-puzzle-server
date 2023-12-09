@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             primaryKey: true
         },
-        title:{
+        title: {
             type: DataTypes.STRING(30),
             allowNull: false
         },
@@ -12,12 +12,12 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        iconImgPath:{
+        iconImgPath: {
             type: DataTypes.STRING,
             allowNull: false,
             defaultValue: 'uploads/channels/default.jpg'
         },
-        thumbnailImgPath:{
+        thumbnailImgPath: {
             type: DataTypes.STRING,
             allowNull: false,
             defaultValue: 'uploads/channels/default.jpg'
@@ -31,19 +31,29 @@ module.exports = (sequelize, DataTypes) => {
 
     Channel.associate = models => {
         Channel.belongsTo(models.User, {
-            foreignKey:'id',
+            foreignKey: 'id',
             onDelete: 'CASCADE'
         });
     }
 
-    Channel.prototype.updateIconImg = function(newIconImgPath){
+    Channel.prototype.updateIconImg = function (newIconImgPath) {
         const oldIconImgPath = this.iconImgPath;
         this.iconImgPath = newIconImgPath;
         return oldIconImgPath;
     }
 
-    Channel.prototype.getIconImg = function(){
+    Channel.prototype.updateThumbnailImg = function (newThumbnailImgPath) {
+        const oldThumbnailImgPath = this.thumbnailImgPath;
+        this.iconImgPath = newThumbnailImgPath;
+        return oldThumbnailImgPath;
+    }
+
+    Channel.prototype.getIconImg = function () {
         return this.iconImgPath;
+    }
+
+    Channel.prototype.getThumbnailImg = function () {
+        return this.thumbnailImgPath;
     }
 
 

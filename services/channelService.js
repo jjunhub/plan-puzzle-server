@@ -22,8 +22,19 @@ const updateIconImg = async (userId, imgPath) => {
     return channel.getIconImg();
 }
 
+const updateThumbnailImg = async (userId, imgPath) => {
+    const channel = await Channel.findByPk(userId);
+    const oldThumbnailImg = channel.updateThumbnailImg(imgPath);
+    channel.save();
+    if(oldThumbnailImg !=='uploads/channels/default.jpg'){
+        //원래꺼 삭제하는 로직 추가
+    }
+    return channel.getThumbnailImg();
+}
+
 module.exports = {
     createChannel,
     getMyChannel,
-    updateIconImg
+    updateIconImg,
+    updateThumbnailImg
 };
