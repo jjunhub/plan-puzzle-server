@@ -263,6 +263,16 @@ const searchInitialPageData = async (queryParameter) => {
     } else {
         order.push(['createdAt', 'DESC']);
     }
+
+    const recruits = await Recruit.findAll({
+        where: finalWhereCondition,
+        order: order,
+        include: writer !== undefined ? [User] : [],
+        limit: pageSize
+    });
+
+    const recruitsDto = await Promise.all(recruits.map(async recruit => await recruitDto.fromRecruit(recruit)));
+    return {recruits: recruitsDto, minId: recruits[recruits.length - 1]?.id || 0};
 }
 
 const searchPagedRecruits = async (queryParameter, nextId) => {
@@ -302,7 +312,6 @@ const searchPagedRecruits = async (queryParameter, nextId) => {
             },
             order: order,
             include: writer !== undefined ? [User] : [],
-            raw: true,
             limit: pageSize
         });
 
@@ -320,7 +329,6 @@ const searchPagedRecruits = async (queryParameter, nextId) => {
             },
             order: order,
             include: writer !== undefined ? [User] : [],
-            raw: true,
             limit: pageSize
         });
 
