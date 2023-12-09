@@ -18,6 +18,10 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             unique: true
         },
+        statusMessage: {
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
         email: {
             type: DataTypes.STRING(30),
             allowNull: true,
@@ -54,32 +58,45 @@ module.exports = (sequelize, DataTypes) => {
             through: 'RecruitUser',
             as: 'Recruits',
             timestamps: false,
-            onDelete:'CASCADE'
+            onDelete: 'CASCADE'
         });
         User.belongsToMany(models.Time, {
             through: 'TimeUser',
             as: 'Times',
             timestamps: false,
-            onDelete:'CASCADE'
+            onDelete: 'CASCADE'
         });
         User.hasMany(models.Comment, {
-            onDelete:'CASCADE'
+            onDelete: 'CASCADE'
         });
-        User.hasOne(models.Channel,{
-            onDelete:'CASCADE',
-            foreignKey:'id'
+        User.hasOne(models.Channel, {
+            onDelete: 'CASCADE',
+            foreignKey: 'id'
         });
-        User.belongsToMany(models.Channel,{
+        User.belongsToMany(models.Channel, {
             through: 'Subscription',
             as: 'Channels',
             timestamps: false,
-            onDelete:'CASCADE'
+            onDelete: 'CASCADE'
         });
     }
 
     User.prototype.getId = function () {
         return this.id;
     }
+
+    User.prototype.updateImgPath = function (imgPath) {
+        this.imagePath = imgPath;
+    }
+
+    User.prototype.updateNickname = function (nickname) {
+        this.nickname = nickname;
+    }
+
+    User.prototype.updateStatusMessage = function (statusMessage) {
+        this.statusMessage = statusMessage;
+    }
+
 
     return User;
 };

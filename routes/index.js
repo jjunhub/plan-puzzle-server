@@ -6,6 +6,7 @@ const schedules = require('./schedules');
 const recruits = require('./recruits');
 const comments = require('./comments');
 const channels = require('./channels');
+const mypage = require('./mypage');
 const checkAuth = require('../middlewares/authHandler');
 const wrapAsync = require('../middlewares/wrapAsync');
 
@@ -14,5 +15,6 @@ router.use('/schedules', wrapAsync(checkAuth), schedules);
 router.use('/recruits', wrapAsync(checkAuth), recruits);
 router.use('/comments',wrapAsync(checkAuth),comments);
 router.use('/channels',wrapAsync(checkAuth),channels);
+router.use('/mypage',wrapAsync(checkAuth),mypage);
 
 module.exports = router;

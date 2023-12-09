@@ -119,5 +119,9 @@ module.exports = (sequelize, DataTypes) => {
         return users?.map(user => user.getId());
     }
 
+    Recruit.prototype.updateState = function (state) {
+        this.state = state;
+    }
+
     return Recruit;
 };
