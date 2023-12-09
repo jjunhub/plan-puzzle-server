@@ -97,6 +97,17 @@ module.exports = (sequelize, DataTypes) => {
         this.statusMessage = statusMessage;
     }
 
+    User.prototype.checkUser = function (id, password) {
+        let status = false;
+        if (this.userId === id && this.userPw === password) {
+            status = true;
+        }
+        return status;
+    }
+
+    User.prototype.changePw = function(newPassword){
+        this.userPw = newPassword;
+    }
 
     return User;
 };

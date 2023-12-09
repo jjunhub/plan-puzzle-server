@@ -26,4 +26,24 @@ const getMySubscription = async (userId) => {
     return await Promise.all(channels.map(channel => channelDto.iconFromChannel(channel)));
 }
 
-module.exports = {updateUserProfile, getMyRecruits, getMySubscription};
+const checkUser = async (userId, userData) => {
+    const {id, password} = userData;
+    const user = await User.findByPk(userId);
+    if (user.checkUser(id, password)) {
+        return {message: 'check user success'};
+    }
+    //error 유저랑 id,password 안 맞음
+}
+
+const changePw = async (userId, userData) => {
+    const {newPassword} = userData;
+    if(!newPassword){
+        //error
+    }
+    const user = await User.findByPk(userId);
+    user.changePw(newPassword);
+    user.save();
+    return {message: 'change success'};
+}
+
+module.exports = {updateUserProfile, getMyRecruits, getMySubscription, checkUser, changePw};

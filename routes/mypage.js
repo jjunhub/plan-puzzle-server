@@ -9,4 +9,7 @@ router.put('/', upload.single('image'), wrapAsync(mypageController.updateUserPro
 router.get('/recruits',wrapAsync(mypageController.getMyRecruits));
 router.get('/subscriptions',wrapAsync(mypageController.getMySubscription));
 
+router.post('/check',wrapAsync(mypageController.checkUser));
+router.post('/password',wrapAsync(mypageController.changePw));
+
 module.exports = router;
