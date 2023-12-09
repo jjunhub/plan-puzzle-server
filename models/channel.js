@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             primaryKey: true
         },
-        title: {
+        nickname: {
             type: DataTypes.STRING(30),
             allowNull: false
         },
@@ -58,7 +58,6 @@ module.exports = (sequelize, DataTypes) => {
     Channel.prototype.getThumbnailImg = function () {
         return this.thumbnailImgPath;
     }
-
 
     return Channel;
 };

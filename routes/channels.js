@@ -9,5 +9,6 @@ router.post('/', wrapAsync(channelController.createChannel));
 router.get('/', wrapAsync(channelController.getMyChannel));
 router.post('/icon',upload.single('image'),wrapAsync(channelController.updateIconImg));
 router.post('/thumbnail',upload.single('image'),wrapAsync(channelController.updateThumbnailImg));
+router.post('/notices',upload.single('image'),wrapAsync(channelController.createNotice));
 
 module.exports = router;

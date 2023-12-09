@@ -1,6 +1,7 @@
 const db = require('../models/index');
 const Recruit = db.Recruit;
 const User = db.User;
+const Channel = db.Channel;
 
 exports.toRecruit = async (recruitData) => {
     const {
@@ -67,7 +68,7 @@ exports.fromRecruit = async (recruit) => {
     if (owner === 'User') {
         writer = await User.findByPk(WriterId);
     } else {
-        //owner가 채널일 경우, 채널의 닉네임 추가해줘야 함
+        writer = await Channel.findByPk(WriterId);
     }
 
     const participantsId = await recruit.getParticipantsId();

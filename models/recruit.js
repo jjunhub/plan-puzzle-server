@@ -56,7 +56,7 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: 'uploads/recruits/default.jpg'
         },
         owner: {
-            type: DataTypes.ENUM('User', 'Chanel'),
+            type: DataTypes.ENUM('User', 'Channel'),
             allowNull: false
         },
         vote: {

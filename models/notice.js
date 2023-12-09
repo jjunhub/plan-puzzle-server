@@ -1,9 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
     const Notice = sequelize.define('Notice', {
-        id: {
-            type: DataTypes.INTEGER,
-            primaryKey: true
-        },
         title: {
             type: DataTypes.STRING(30),
             allowNull: false
