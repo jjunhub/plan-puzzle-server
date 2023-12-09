@@ -8,9 +8,9 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             allowNull: false
         },
-        imgPath:{
-            type:DataTypes.STRING,
-            allowNull:true
+        imgPath: {
+            type: DataTypes.STRING,
+            allowNull: true
         }
     }, {
         charset: 'utf8',
@@ -23,6 +23,14 @@ module.exports = (sequelize, DataTypes) => {
         Notice.belongsTo(models.Channel, {
             onDelete: 'CASCADE'
         });
+    }
+
+    Notice.prototype.getTitle = function () {
+        return this.title;
+    }
+
+    Notice.prototype.getContent = function () {
+        return this.content;
     }
 
     return Notice;

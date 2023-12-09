@@ -105,6 +105,9 @@ module.exports = (sequelize, DataTypes) => {
             this.state = 'Closed';
         }
     }
+    Recruit.prototype.changeVoteBefore = function () {
+        this.vote = 'Before';
+    }
 
     Recruit.prototype.changeVoteStart = function () {
         this.vote = 'During';
@@ -121,6 +124,10 @@ module.exports = (sequelize, DataTypes) => {
 
     Recruit.prototype.getImgPath = function () {
         return this.imagePath;
+    }
+
+    Recruit.prototype.getTimeCategory = async function () {
+        return this.timeCategory;
     }
 
     Recruit.prototype.updateState = function (state) {

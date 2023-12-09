@@ -34,6 +34,12 @@ const getMySubscription = async (userId) => {
     return await Promise.all(channels.map(channel => channelDto.iconFromChannel(channel)));
 }
 
+const getMyParticipants = async (userId) => {
+    const user = await User.findByPk(userId);
+    const recruits = await user.getRecruits();
+    return await Promise.all(recruits.map(recruit => recruitDto.fromRecruit(recruit)));
+}
+
 const checkUser = async (userId, userData) => {
     const {id, password} = userData;
     const user = await User.findByPk(userId);
@@ -54,4 +60,4 @@ const changePw = async (userId, userData) => {
     return {message: '비밀번호 변경 성공'};
 }
 
-module.exports = {updateUserProfile, getMyRecruits, getMySubscription, checkUser, changePw};
+module.exports = {updateUserProfile, getMyRecruits, getMySubscription, getMyParticipants, checkUser, changePw};
