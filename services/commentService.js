@@ -12,7 +12,8 @@ const getComments = async (recruitId) => {
     const comments = await Comment.findAll({
         where: {
             RecruitId: recruitId
-        }
+        },
+        order:[['id','DESC']]
     });
     return await Promise.all(comments.map(async (comment) => {
         return await commentDto.fromComment(comment);
