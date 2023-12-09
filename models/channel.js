@@ -26,6 +26,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
             defaultValue: 'uploads/channels/default.jpg'
+        },
+        recruitUpdatedAt:{
+            type:DataTypes.DATE,
+            allowNull:true
         }
     }, {
         charset: 'utf8',
@@ -79,6 +83,10 @@ module.exports = (sequelize, DataTypes) => {
 
     Channel.prototype.decreaseFollowerNum = function () {
         this.followerNum -= 1;
+    }
+
+    Channel.prototype.updateRecruitDate = function () {
+        this.recruitUpdatedAt = new Date();
     }
 
     Channel.prototype.getIconImg = function () {

@@ -83,12 +83,21 @@ module.exports = (sequelize, DataTypes) => {
             through: 'RecruitUser',
             as: 'Users',
             timestamps: false,
-            onDelete:'CASCADE'
+            onDelete: 'CASCADE'
         });
-        Recruit.hasMany(models.Comment,{
+        Recruit.hasMany(models.Comment, {
             onDelete: 'CASCADE'
         });
     }
+
+    Recruit.addHook('afterCreate', async (recruitInstance, options) => {
+        if (recruitInstance.owner !== 'Channel') return;
+        const channel = await sequelize.models.Channel.findByPk(recruitInstance.WriterId);
+        if (channel) {
+            channel.updateRecruitDate();
+            channel.save();
+        }
+    });
 
     Recruit.prototype.increaseParticipateNum = function () {
         this.participateNum += 1;

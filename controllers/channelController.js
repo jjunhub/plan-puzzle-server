@@ -41,11 +41,17 @@ const updateSubscribe = async(req,res)=>{
     res.status(200).json(response);
 }
 
+const getInitialChannelData = async(req,res)=>{
+    const response = await channelService.getInitialChannelData();
+    res.status(200).json(response);
+}
+
 module.exports = {
     createChannel,
     getMyChannel,
     updateIconImg,
     updateThumbnailImg,
     createNotice,
-    updateSubscribe
+    updateSubscribe,
+    getInitialChannelData
 };

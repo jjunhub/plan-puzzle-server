@@ -1,4 +1,6 @@
 const db = require('../models/index');
+// const {Op} = require("sequelize");
+
 const Channel = db.Channel;
 const Notice = db.Notice;
 const Recruit = db.Recruit;
@@ -7,6 +9,8 @@ const User = db.User;
 const channelDto = require("../dto/channelDto");
 const noticeDto = require('../dto/noticeDto');
 const recruitDto = require('../dto/recruitDto');
+
+const pageSize = 10
 
 const createChannel = async (userId, channelData) => {
     await channelDto.toChannel(userId, channelData);
@@ -96,11 +100,24 @@ const updateSubscribe = async (userId, channelId) => {
     return response;
 }
 
+const getInitialChannelData = async () => {
+    const channels = await Channel.findAll({
+        order: [['recruitUpdatedAt', 'DESC']],
+        limit: pageSize
+    });
+    const minId = channels[channels.length - 1]?.id || 0;
+    const channelsDto = channels.map( channel => channelDto.fromChannel(channel));
+
+    return {channels: channelsDto, minId: minId};
+}
+
+
 module.exports = {
     createChannel,
     getMyChannel,
     updateIconImg,
     updateThumbnailImg,
     createNotice,
-    updateSubscribe
+    updateSubscribe,
+    getInitialChannelData
 };
