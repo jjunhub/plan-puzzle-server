@@ -287,8 +287,6 @@ const endVote = async (recruitId, idList) => {
     if (!recruit) {
         throw new Error(NotFoundRecruitError.MESSAGE.message);
     }
-    recruit.changeVoteEnd();
-    recruit.save();
 
     const recruitUsers = await recruit.getUsers();
     const times = await Time.findAll({
@@ -330,6 +328,8 @@ const endVote = async (recruitId, idList) => {
             await scheduleService.createSchedule(user.getId(), schedule);
         }
     }
+    recruit.changeVoteEnd();
+    recruit.save();
     return alreadyExistScheduleUsers;
 }
 

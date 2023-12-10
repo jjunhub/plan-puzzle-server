@@ -83,7 +83,12 @@ const endVote = async (req, res) => {
     const recruitId = req.params.recruitId;
     const idList = req.body.idList;
     const response = await recruitService.endVote(recruitId,idList);
-    res.status(200).json(response);
+    if(response.length) {
+        res.status(200).json(response);
+    }
+    else{
+        res.status(400).json(response);
+    }
 }
 const searchRecruit = async (req, res) => {
     const queryParameter = req.query;
