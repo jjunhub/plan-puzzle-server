@@ -84,6 +84,10 @@ module.exports = (sequelize, DataTypes) => {
         return this.id;
     }
 
+    User.prototype.getNickname = function () {
+        return this.nickname;
+    }
+
     User.prototype.updateImgPath = function (imgPath) {
         if (imgPath) {
             this.imagePath = imgPath;
