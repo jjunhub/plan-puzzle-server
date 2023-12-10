@@ -128,8 +128,16 @@ module.exports = (sequelize, DataTypes) => {
         return this.imagePath;
     }
 
-    Recruit.prototype.getTimeCategory = async function () {
+    Recruit.prototype.getTimeCategory = function () {
         return this.timeCategory;
+    }
+
+    Recruit.prototype.getTitle = function () {
+        return this.title;
+    }
+
+    Recruit.prototype.getContent = function () {
+        return this.content;
     }
 
     Recruit.prototype.updateState = function (state) {

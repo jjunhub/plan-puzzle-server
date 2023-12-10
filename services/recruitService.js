@@ -9,13 +9,15 @@ const Time = db.Time;
 const recruitDto = require('../dto/recruitDto')
 const timeDto = require('../dto/timeDto');
 const {s3, deleteS3Object} = require('../config/s3Config');
-const { defaultRecruitImgPath } = require("../constants/defaultImgPath");
+const {defaultRecruitImgPath} = require("../constants/defaultImgPath");
 const {
     InvalidRecruitTimeCategoryError,
     NotFoundRecruitError,
     AlreadyExistUserError,
     ExceedDaysError
 } = require("../constants/errors");
+
+const scheduleService = require('./scheduleService');
 
 //pageSize 상수
 const pageSize = 10;
@@ -124,10 +126,10 @@ const updateRecruit = async (userId, recruitId, recruitData) => {
         deleteS3Object(oldImgPath);
     }
 
-    if(timeCategory !== recruit.getTimeCategory()){
+    if (timeCategory !== recruit.getTimeCategory()) {
         await Time.destroy({
-            where:{
-                recruitId:recruitId
+            where: {
+                recruitId: recruitId
             }
         });
         recruit.changeVoteBefore();
@@ -280,13 +282,55 @@ const doVote = async (userId, recruitId, idList) => {
     });
 }
 
-const endVote = async (recruitId) => {
+const endVote = async (recruitId, idList) => {
     const recruit = await Recruit.findByPk(recruitId);
     if (!recruit) {
         throw new Error(NotFoundRecruitError.MESSAGE.message);
     }
     recruit.changeVoteEnd();
     recruit.save();
+
+    const recruitUsers = await recruit.getUsers();
+    const times = await Time.findAll({
+        where: {
+            id: {
+                [Op.in]: idList
+            }
+        }
+    });
+    const scheduleData = times.map(time => {
+        const {date, startTime, endTime} = time;
+        return {
+            startDate: date,
+            endDate: date,
+            startTime: startTime,
+            endTime: endTime,
+            repeatPeriod: 1,
+            title: recruit.getTitle(),
+            content: recruit.getContent(),
+            color: 'f514514'
+        }
+    });
+    let alreadyExistScheduleUsers = [];
+    for (const user of recruitUsers) {
+        for (const schedule of scheduleData) {
+            const isValid = await scheduleService.validateCreateSchedule(user.getId(), schedule);
+            if (isValid.length) {
+                alreadyExistScheduleUsers.push(user.getNickname());
+                break;
+            }
+        }
+    }
+    if (alreadyExistScheduleUsers.length) {
+        return alreadyExistScheduleUsers;
+    }
+
+    for (const user of recruitUsers) {
+        for (const schedule of scheduleData) {
+            await scheduleService.createSchedule(user.getId(), schedule);
+        }
+    }
+    return alreadyExistScheduleUsers;
 }
 
 const searchInitialPageData = async (queryParameter) => {

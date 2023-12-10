@@ -81,8 +81,9 @@ const doVote = async (req, res) => {
 
 const endVote = async (req, res) => {
     const recruitId = req.params.recruitId;
-    await recruitService.endVote(recruitId);
-    res.status(200).send();
+    const idList = req.body.idList;
+    const response = await recruitService.endVote(recruitId,idList);
+    res.status(200).json(response);
 }
 const searchRecruit = async (req, res) => {
     const queryParameter = req.query;
