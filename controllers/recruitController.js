@@ -83,7 +83,7 @@ const endVote = async (req, res) => {
     const recruitId = req.params.recruitId;
     const idList = req.body.idList;
     const response = await recruitService.endVote(recruitId,idList);
-    if(response.length) {
+    if(!response.length) {
         res.status(200).json(response);
     }
     else{
