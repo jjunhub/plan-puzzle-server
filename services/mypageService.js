@@ -2,6 +2,7 @@ const db = require('../models/index');
 const {Op} = require("sequelize");
 const recruitDto = require('../dto/recruitDto');
 const channelDto = require('../dto/channelDto');
+const userDto = require('../dto/userDto');
 const User = db.User;
 const {EmptyPasswordError, NotMatchedUserError} = require('../constants/errors')
 const {deleteS3Object} = require('../config/s3Config')
@@ -11,15 +12,20 @@ const updateUserProfile = async (userId, profileData) => {
     const user = await User.findByPk(userId);
     const {imgPath, nickname, statusMessage} = profileData;
     const oldImgPath = user.getImgPath();
-    user.updateImgPath(imgPath);
+
+    if(user.updateImgPath(imgPath)){
+        if (oldImgPath !== defaultUserImgPath) {
+            deleteS3Object(oldImgPath);
+        }
+    }
     user.updateNickname(nickname);
     user.updateStatusMessage(statusMessage);
     user.save();
 
-    if (oldImgPath !== defaultUserImgPath) {
-        deleteS3Object(oldImgPath);
-    }
-    return {message: '유저 프로필 업데이트 성공'};
+    // if (oldImgPath !== defaultUserImgPath) {
+    //     deleteS3Object(oldImgPath);
+    // }
+    return userDto.fromUser(user);
 }
 
 const getMyRecruits = async (userId) => {

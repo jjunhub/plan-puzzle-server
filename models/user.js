@@ -85,15 +85,27 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     User.prototype.updateImgPath = function (imgPath) {
-        this.imagePath = imgPath;
+        if (imgPath) {
+            this.imagePath = imgPath;
+            return true;
+        }
+        return false;
     }
 
     User.prototype.updateNickname = function (nickname) {
-        this.nickname = nickname;
+        if(nickname) {
+            this.nickname = nickname;
+            return true;
+        }
+        return false;
     }
 
     User.prototype.updateStatusMessage = function (statusMessage) {
-        this.statusMessage = statusMessage;
+        if(statusMessage) {
+            this.statusMessage = statusMessage;
+            return true;
+        }
+        return false;
     }
 
     User.prototype.checkUser = function (id, password) {
@@ -104,7 +116,7 @@ module.exports = (sequelize, DataTypes) => {
         return status;
     }
 
-    User.prototype.changePw = function(newPassword){
+    User.prototype.changePw = function (newPassword) {
         this.userPw = newPassword;
     }
 
